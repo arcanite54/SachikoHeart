@@ -10,6 +10,7 @@ var MyLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create("Hello World", "Arial", 40);
         label.setPosition(size.width / 2, size.height / 2);
+        label.setColor(cc.color(255,0,0,255));
         this.addChild(label, 1);
 
         return true;
