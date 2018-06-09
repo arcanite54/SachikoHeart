@@ -1,23 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello Cocos2d-JS</title> 
-    <script type="text/javascript" src="cocos2d-js-v3.13-lite.js" charset="UTF-8"></script>
-    <script type="text/javascript" src="resource.js" charset="UTF-8"></script>
-    <script type="text/javascript" src="./src/myScene.js" charset="UTF-8"></script>
+    <title>sachiko</title> 
+    
 </head>
 <body>   
+    <script type="text/javascript" src="cocos2d-js-v3.13-lite.js" charset="UTF-8"></script>
     <canvas id="gameCanvas" width="800" height="450"></canvas>
-    <script type="text/javascript">
-          window.onload = function(){
-              cc.game.onStart = function(){
-                  //load resources
-                  cc.LoaderScene.preload(g_resources, function () {
-                      cc.director.runScene(new MyScene());
-                  }, this);
-              };
-              cc.game.run("gameCanvas");
-          };
-    </script>
+    <script type="text/javascript" src="main.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="resource.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="./src/myScene.js" charset="UTF-8"></script>
+
 </body>
 </html>
