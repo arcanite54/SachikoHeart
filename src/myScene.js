@@ -1,13 +1,17 @@
+//このへんグローバルにしていいのか？
+var player;
+var gameLayer;
+var scoreLabel;
 
 var MyScene = cc.Scene.extend({
     onEnter:function () {
         this._super();
-        var layer = new GameMainLayer();
-        this.addChild(layer);
+        gameLayer = new GameMainLayer();
+        this.addChild(gameLayer);
     }
 });
 
-var player;
+
 
 var GameMainLayer = cc.Layer.extend({
     //sprite:null,
@@ -17,7 +21,6 @@ var GameMainLayer = cc.Layer.extend({
         this._super();
         var backgroundLayer = new cc.LayerColor(cc.color(170,202,222,255));
         this.addChild(backgroundLayer);
-
 /*    
         cc.eventManager.addListener({
             event:cc.EventListener.MOUSE,
@@ -31,13 +34,21 @@ var GameMainLayer = cc.Layer.extend({
         cc.eventManager.addListener(listener,this);
         player = new Player();
         this.addChild(player, 0);
+        this.score=0;
+        scoreLabel=cc.LabelTTF.create("score:"+this.score,"Arial",40);
+        scoreLabel.setPosition(cc.winSize.width-120,cc.winSize.height-50);
+        scoreLabel.setColor(cc.color(255,255,255));
+        this.addChild(scoreLabel,1);
         this.scheduleUpdate();
 
-        this.schedule(this.addHeart,1);
+
+        this.schedule(this.addHeart,3);
     },
     update:function(dt)
     {
         player.update();
+        this.score=player.getScore();
+        scoreLabel.setString("score:"+this.score);
         //this.player.hoge();
     },
     addHeart:function(event)
@@ -74,6 +85,7 @@ var Player = cc.Sprite.extend({
         this.setPosition(size.width/2,size.height/4);
         this.targetX=this.getPosition().x;
         this.speed=5;
+        this.score=0;
         /*
         this.attr({
             x: size.width/2,
@@ -88,6 +100,7 @@ var Player = cc.Sprite.extend({
         var moveX = this.getPosition().x-this.targetX > 0 ? -this.speed : this.speed;
         if(Math.abs(this.getPosition().x-this.targetX)<this.speed)moveX=0;
         this.setPosition(this.getPosition().x+moveX,this.getPosition().y);
+        console.log(this.score);
     },
     changeTargetX:function(_x)
     {
@@ -97,6 +110,14 @@ var Player = cc.Sprite.extend({
     {
         console.log("hoge");
     },
+    scorePlus:function(_x)
+    {
+        this.score+=_x;
+    },
+    getScore:function()
+    {
+        return this.score;
+    }
 
 
 
@@ -112,18 +133,24 @@ var Heart = cc.Sprite.extend({
     onEnter:function()
     {
         this._super();
-        var startX=Math.random()*300;
-        this.setPosition(startX,1000);
-        console.log(startX);
-        var moveAction = cc.MoveTo.create(2.5,new cc.Point(startX,-100));
+        var startX=Math.random()*cc.winSize.width;
+        this.setPosition(startX,cc.winSize.height+100);
+        //console.log(startX);
+        var moveAction = cc.MoveTo.create(5,new cc.Point(startX,-100));
         this.runAction(moveAction);
         this.scheduleUpdate();
+        this.point=1;//あとで3ポイントもつける
     },
     update:function(dt)
     {
-        if(this.getPosition().x< -100)
+        if(cc.rectIntersectsRect(player.getBoundingBox(),this.getBoundingBox()))
         {
-
+            gameLayer.removeHeart(this);
+            player.scorePlus(this.point);
+        }
+        if(this.getPosition().y< -100)
+        {
+            gameLayer.removeHeart(this);
         }
     }
 
