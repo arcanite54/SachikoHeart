@@ -1,10 +1,11 @@
 //このへんグローバルにしていいのか？
 var player;
 var gameLayer;
-var scoreLabel;
+
 
 var MyScene = cc.Scene.extend({
-    onEnter:function () {
+    onEnter:function () 
+    {
         this._super();
         gameLayer = new GameMainLayer();
         this.addChild(gameLayer);
@@ -34,31 +35,44 @@ var GameMainLayer = cc.Layer.extend({
         cc.eventManager.addListener(listener,this);
         player = new Player();
         this.addChild(player, 0);
-        this.score=0;
-        scoreLabel=cc.LabelTTF.create("score:"+this.score,"Arial",40);
-        scoreLabel.setPosition(cc.winSize.width-120,cc.winSize.height-50);
-        scoreLabel.setColor(cc.color(255,255,255));
-        this.addChild(scoreLabel,1);
+        this.scoreLabel=cc.LabelTTF.create("score:"+this.score,"Arial",40);
+        this.scoreLabel.setPosition(cc.winSize.width-120,cc.winSize.height-90);
+        this.scoreLabel.setColor(cc.color(255,255,255));
+
+        this.HPLabel=cc.LabelTTF.create("life:"+this.playerHP,"Arial",40);
+        this.HPLabel.setPosition(cc.winSize.width-120,cc.winSize.height-50);
+        this.HPLabel.setColor(cc.color(255,255,255));
+
+        this.addChild(this.scoreLabel,1);
+        this.addChild(this.HPLabel,1);
+
         this.scheduleUpdate();
 
 
         this.schedule(this.addHeart,3);
+        this.schedule(this.addEnemy,7);
     },
     update:function(dt)
     {
         player.update();
-        this.score=player.getScore();
-        scoreLabel.setString("score:"+this.score);
-        //this.player.hoge();
+        this.scoreLabel.setString("score:"+player.getScore());
+        this.HPLabel.setString("life:"+player.getHP());
+
+        //this.this.player.hoge();
     },
     addHeart:function(event)
     {
         var heart=new Heart();
         this.addChild(heart,1);
     },
-    removeHeart:function(_heart)
+    addEnemy:function(event)
     {
-        this.removeChild(_heart);
+        var enemy=new Enemy();
+        this.addChild(enemy,1);
+    },
+    removeObj:function(_obj)
+    {
+        this.removeChild(_obj);
     }
 });
 
@@ -86,29 +100,18 @@ var Player = cc.Sprite.extend({
         this.targetX=this.getPosition().x;
         this.speed=5;
         this.score=0;
-        /*
-        this.attr({
-            x: size.width/2,
-            y: size.height/4
-        });
-        */
-        //cc.eventManager.addListener(listener.clone(),this);
-
+        this.HP=3;
     },
-    update:function()
+    update:function(dt)
     {
         var moveX = this.getPosition().x-this.targetX > 0 ? -this.speed : this.speed;
         if(Math.abs(this.getPosition().x-this.targetX)<this.speed)moveX=0;
         this.setPosition(this.getPosition().x+moveX,this.getPosition().y);
-        console.log(this.score);
+        //console.log(this.score);
     },
     changeTargetX:function(_x)
     {
         this.targetX=_x;
-    },
-    hoge:function()
-    {
-        console.log("hoge");
     },
     scorePlus:function(_x)
     {
@@ -117,18 +120,21 @@ var Player = cc.Sprite.extend({
     getScore:function()
     {
         return this.score;
+    },
+    damage:function()
+    {
+        this.HP-=1;
+    },
+    getHP:function()
+    {
+        return this.HP;
     }
-
-
-
 });
 
-
-var Heart = cc.Sprite.extend({
+var FallObj = cc.Sprite.extend({
     ctor:function()
     {
         this._super();
-        this.initWithFile(res.img_heart1);
     },
     onEnter:function()
     {
@@ -139,19 +145,66 @@ var Heart = cc.Sprite.extend({
         var moveAction = cc.MoveTo.create(5,new cc.Point(startX,-100));
         this.runAction(moveAction);
         this.scheduleUpdate();
-        this.point=1;//あとで3ポイントもつける
     },
     update:function(dt)
     {
         if(cc.rectIntersectsRect(player.getBoundingBox(),this.getBoundingBox()))
         {
-            gameLayer.removeHeart(this);
-            player.scorePlus(this.point);
+            this.hit();
+            gameLayer.removeObj(this);
         }
         if(this.getPosition().y< -100)
         {
-            gameLayer.removeHeart(this);
+            gameLayer.removeObj(this);
         }
+    },
+    hit:function()
+    {
+        //継承先で実装
     }
 
 });
+
+var Heart =FallObj.extend({
+        ctor:function()
+        {
+            this._super();
+            if(Math.floor(Math.random()*5)==0)
+            {
+                this.initWithFile(res.img_heart3);
+                this.point=3;
+            }
+            else
+            {
+                this.initWithFile(res.img_heart1);
+                this.point=1;
+            }
+        },
+        onEnter:function()
+        {
+            this._super();
+        },
+        hit:function()
+        {
+            //this._super();
+            player.scorePlus(this.point);
+        }
+    }
+);
+
+var Enemy =FallObj.extend({
+        ctor:function()
+        {
+            this._super();
+            this.initWithFile(res.img_enemy);
+        },
+        onEnter:function()
+        {
+            this._super();
+        },
+        hit:function()
+        {
+            player.damage();
+        }
+    }
+);
