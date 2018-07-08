@@ -1,7 +1,5 @@
 //このへんグローバルにしていいのか？
-var player;
 var gameLayer;
-
 
 var MyScene = cc.Scene.extend({
     onEnter:function () 
@@ -12,8 +10,6 @@ var MyScene = cc.Scene.extend({
     }
 });
 
-
-
 var GameMainLayer = cc.Layer.extend({
     //sprite:null,
     //コンストラクタ
@@ -22,27 +18,35 @@ var GameMainLayer = cc.Layer.extend({
         this._super();
         var backgroundLayer = new cc.LayerColor(cc.color(170,202,222,255));
         this.addChild(backgroundLayer);
-/*    
-        cc.eventManager.addListener({
-            event:cc.EventListener.MOUSE,
-            onMouseDown:function(event)
+
+        this.player = new Player();
+        this.addChild(this.player, 0);
+
+        //ここレイヤの外で定義したいけど。
+        var listener=cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function(touch,event)
             {
-                player.changeTargetX(event.getLocationX());
-                //this.player.targetX=event.getLocationX();
+                var target = event.getCurrentTarget();
+                //var target = event.getCurrentTarget();
+                //var location = target.convertToNodeSpace(touch.getLocation());
+                //var targetSize = target.getContentSize();
+                //var targetRectangle = cc.rect(0,0,targetSize.width,targetSize.height);
+                target.player.changeTargetX(touch.getLocation().x);
+                return true;
             }
-        },this);
-        */
+        });
         cc.eventManager.addListener(listener,this);
-        player = new Player();
-        this.addChild(player, 0);
-        this.scoreLabel=cc.LabelTTF.create("score:"+this.score,"Arial",40);
+
+        this.scoreLabel=cc.LabelTTF.create("score:","Arial",40);
         this.scoreLabel.setPosition(cc.winSize.width-120,cc.winSize.height-90);
         this.scoreLabel.setColor(cc.color(255,255,255));
 
-        this.HPLabel=cc.LabelTTF.create("life:"+this.playerHP,"Arial",40);
+        this.HPLabel=cc.LabelTTF.create("life:","Arial",40);
         this.HPLabel.setPosition(cc.winSize.width-120,cc.winSize.height-50);
         this.HPLabel.setColor(cc.color(255,255,255));
-
+        this.heartList = [];
         this.addChild(this.scoreLabel,1);
         this.addChild(this.HPLabel,1);
 
@@ -50,20 +54,23 @@ var GameMainLayer = cc.Layer.extend({
 
 
         this.schedule(this.addHeart,3);
-        this.schedule(this.addEnemy,7);
+        //this.schedule(this.addEnemy,7);
     },
     update:function(dt)
     {
-        player.update();
-        this.scoreLabel.setString("score:"+player.getScore());
-        this.HPLabel.setString("life:"+player.getHP());
-
-        //this.this.player.hoge();
+        this.player.update();
+        this.scoreLabel.setString("score:"+this.player.getScore());
+        this.HPLabel.setString("life:"+this.player.getHP());
+        for(var i=0;i<this.heartList.length;i++)
+        {
+            this.heartList[i]._update(this.player);
+        }
     },
     addHeart:function(event)
     {
         var heart=new Heart();
         this.addChild(heart,1);
+        this.heartList.push(heart);
     },
     addEnemy:function(event)
     {
@@ -73,9 +80,10 @@ var GameMainLayer = cc.Layer.extend({
     removeObj:function(_obj)
     {
         this.removeChild(_obj);
+        this.heartList.splice(this.heartList.indexOf(_obj),1);
     }
 });
-
+/*
 var listener = cc.EventListener.create({
     event: cc.EventListener.TOUCH_ONE_BY_ONE,
     swallowTouches: true,
@@ -89,6 +97,7 @@ var listener = cc.EventListener.create({
 
     }
 });
+*/
 
 var Player = cc.Sprite.extend({
     ctor:function()
@@ -146,19 +155,20 @@ var FallObj = cc.Sprite.extend({
         this.runAction(moveAction);
         this.scheduleUpdate();
     },
-    update:function(dt)
+    _update:function(_player)
     {
-        if(cc.rectIntersectsRect(player.getBoundingBox(),this.getBoundingBox()))
+        if(cc.rectIntersectsRect(_player.getBoundingBox(),this.getBoundingBox()))
         {
-            this.hit();
+            this.hit(_player);
             gameLayer.removeObj(this);
+            console.log("hoge");
         }
         if(this.getPosition().y< -100)
         {
             gameLayer.removeObj(this);
         }
     },
-    hit:function()
+    hit:function(_player)
     {
         //継承先で実装
     }
@@ -180,14 +190,9 @@ var Heart =FallObj.extend({
                 this.point=1;
             }
         },
-        onEnter:function()
+        hit:function(_player)
         {
-            this._super();
-        },
-        hit:function()
-        {
-            //this._super();
-            player.scorePlus(this.point);
+            _player.scorePlus(this.point);
         }
     }
 );
@@ -198,13 +203,9 @@ var Enemy =FallObj.extend({
             this._super();
             this.initWithFile(res.img_enemy);
         },
-        onEnter:function()
+        hit:function(_player)
         {
-            this._super();
-        },
-        hit:function()
-        {
-            player.damage();
+            _player.damage();
         }
     }
 );
