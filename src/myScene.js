@@ -47,6 +47,7 @@ var GameMainLayer = cc.Layer.extend({
         this.HPLabel.setPosition(cc.winSize.width-120,cc.winSize.height-50);
         this.HPLabel.setColor(cc.color(255,255,255));
         this.heartList = [];
+        this.enemyList = [];
         this.addChild(this.scoreLabel,1);
         this.addChild(this.HPLabel,1);
 
@@ -54,7 +55,7 @@ var GameMainLayer = cc.Layer.extend({
 
 
         this.schedule(this.addHeart,3);
-        //this.schedule(this.addEnemy,7);
+        this.schedule(this.addEnemy,7);
     },
     update:function(dt)
     {
@@ -65,6 +66,11 @@ var GameMainLayer = cc.Layer.extend({
         {
             this.heartList[i]._update(this.player);
         }
+        for(var i=0;i<this.enemyList.length;i++)
+        {
+            this.enemyList[i]._update(this.player);
+        }
+
     },
     addHeart:function(event)
     {
@@ -76,12 +82,21 @@ var GameMainLayer = cc.Layer.extend({
     {
         var enemy=new Enemy();
         this.addChild(enemy,1);
+        this.enemyList.push(enemy);
+
     },
-    removeObj:function(_obj)
+    //この二つのremoveまとめられそうだけど．
+    removeHeart:function(_obj)
     {
         this.removeChild(_obj);
         this.heartList.splice(this.heartList.indexOf(_obj),1);
+    },
+    removeEnemy:function(_obj)
+    {
+        this.removeChild(_obj);
+        this.enemyList.splice(this.enemyList.indexOf(_obj),1);
     }
+
 });
 /*
 var listener = cc.EventListener.create({
@@ -160,19 +175,22 @@ var FallObj = cc.Sprite.extend({
         if(cc.rectIntersectsRect(_player.getBoundingBox(),this.getBoundingBox()))
         {
             this.hit(_player);
-            gameLayer.removeObj(this);
+            this.removeObj(this);
             console.log("hoge");
         }
         if(this.getPosition().y< -100)
         {
-            gameLayer.removeObj(this);
+            this.removeObj(this);
         }
     },
     hit:function(_player)
     {
         //継承先で実装
+    },
+    removeObj:function()
+    {
+        //継承先で実装
     }
-
 });
 
 var Heart =FallObj.extend({
@@ -193,6 +211,10 @@ var Heart =FallObj.extend({
         hit:function(_player)
         {
             _player.scorePlus(this.point);
+        },
+        removeObj:function()
+        {
+            gameLayer.removeHeart(this);
         }
     }
 );
@@ -206,6 +228,10 @@ var Enemy =FallObj.extend({
         hit:function(_player)
         {
             _player.damage();
+        },
+        removeObj:function()
+        {
+            gameLayer.removeEnemy(this);
         }
     }
 );
