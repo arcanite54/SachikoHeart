@@ -19,7 +19,8 @@ var GameMainLayer = cc.Layer.extend({
 
         this.player = new Player();
         this.addChild(this.player, 0);
-
+        this.time = 0;
+        this.isDead = false;
         //ここレイヤの外で定義したいけど。
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -36,11 +37,19 @@ var GameMainLayer = cc.Layer.extend({
         });
         cc.eventManager.addListener(listener, this);
 
-        this.scoreLabel = cc.LabelTTF.create("score:", "Arial", 40);
+        this.scoreLabel = cc.LabelTTF.create("スコア:", "Arial", 40);
         this.scoreLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 90);
         this.scoreLabel.setColor(cc.color(255, 255, 255));
 
-        this.HPLabel = cc.LabelTTF.create("life:", "Arial", 40);
+        this.resultLabel = cc.LabelTTF.create("スコア:", "Arial", 80);
+        this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+        this.resultLabel.setColor(cc.color(255, 0, 0));
+        this.resultLabel2 = cc.LabelTTF.create("ゲームオーバー", "Arial", 60);
+        this.resultLabel2.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 90);
+        this.resultLabel2.setColor(cc.color(255, 0, 0));
+
+
+        this.HPLabel = cc.LabelTTF.create("残りHP:", "Arial", 40);
         this.HPLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 50);
         this.HPLabel.setColor(cc.color(255, 255, 255));
         this.heartList = [];
@@ -50,23 +59,36 @@ var GameMainLayer = cc.Layer.extend({
 
         this.scheduleUpdate();
 
-        this.schedule(this.addHeart, 3);
-        this.schedule(this.addEnemy, 7);
+        //this.schedule(this.addHeart, 3);
+        //this.schedule(this.addEnemy, 7);
 
     },
     update: function (dt) {
+        if (this.isDead) return;
+        this.time++;
         //this.player.update();
-        this.scoreLabel.setString("score:" + this.player.getScore());
-        this.HPLabel.setString("life:" + this.player.getHP());
+        this.scoreLabel.setString("スコア:" + this.player.getScore());
+        this.HPLabel.setString("残りHP:" + this.player.getHP());
+
+        if (this.player.getHP() <= 0) {
+            //cc.director.runScene(new Result());
+            this.resultLabel.setString("スコア:" + this.player.getScore());
+            this.addChild(this.resultLabel, 1);
+            this.addChild(this.resultLabel2, 1);
+            //this.player.changeIsMove();
+            this.isDead = true;
+        }
         for (var i = 0; i < this.heartList.length; i++) {
             this.heartList[i]._update(this.player);
         }
         for (var i = 0; i < this.enemyList.length; i++) {
             this.enemyList[i]._update(this.player);
         }
-        if (this.player.getHP() <= 0) {
-            cc.director.runScene(new Result());
-        }
+        var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
+        var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
+        console.log(h_t, e_t);
+        if (this.time % h_t == 0) this.addHeart();
+        if (this.time % e_t == 0) this.addEnemy();
 
     },
     addHeart: function (event) {
@@ -120,6 +142,7 @@ var Player = cc.Sprite.extend({
         this.HP = 3;
         this.actionList = [];
         this.preMoveX = 0;
+        this.isMove = false;
     },
     update: function (dt) {
         this._super();
@@ -163,6 +186,9 @@ var Player = cc.Sprite.extend({
         //console.log("animation"+act);
         this.stopAllActions();
         this.runAction(this.actionList[act]);
+    },
+    changeIsMove: function () {
+        this.isMove = true;
     }
 
 });
@@ -184,7 +210,7 @@ var FallObj = cc.Sprite.extend({
         if (cc.rectIntersectsRect(_player.getBoundingBox(), this.getBoundingBox())) {
             this.hit(_player);
             this.removeObj(this);
-            console.log("hoge");
+            //console.log("hoge");
         }
         if (this.getPosition().y < -100) {
             this.removeObj(this);
