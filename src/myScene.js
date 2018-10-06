@@ -84,22 +84,41 @@ var GameMainLayer = cc.Layer.extend({
         for (var i = 0; i < this.enemyList.length; i++) {
             this.enemyList[i]._update(this.player);
         }
+
         var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
         var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
-        console.log(h_t, e_t);
-        if (this.time % h_t == 0) this.addHeart();
-        if (this.time % e_t == 0) this.addEnemy();
+        //console.log(h_t, e_t);
+        if (this.time % h_t == 0) this.preAddHeart();
+        if (this.time % e_t == 0) this.preAddEnemy();
+
+
 
     },
-    addHeart: function (event) {
+    addHeart: function (_i) {
         var heart = new Heart();
+        heart.init(_i);
         this.addChild(heart, 1);
         this.heartList.push(heart);
     },
-    addEnemy: function (event) {
+    addEnemy: function (_i) {
         var enemy = new Enemy();
+        enemy.init(_i);
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
+    },
+    preAddHeart: function () {
+        for (var i = 0; i < 7; i++) {
+            if (Math.floor(Math.random() * 10) < 4) this.addHeart(i);
+        }
+    },
+    preAddEnemy: function () {
+        var k = Math.floor(Math.random() * 7.9);
+        for (var i = 0; i < 7; i++) {
+            if (i == k) continue;
+            if (Math.floor(Math.random() * 10) < 7) {
+                this.addEnemy(i);
+            }
+        }
 
     },
     //この二つのremoveまとめられそうだけど．
@@ -194,12 +213,15 @@ var Player = cc.Sprite.extend({
 });
 
 var FallObj = cc.Sprite.extend({
-    ctor: function () {
+    ctor: function (_x) {
         this._super();
+    },
+    init: function (_x) {
+        this.x = _x;
     },
     onEnter: function () {
         this._super();
-        var startX = Math.random() * cc.winSize.width;
+        var startX = this.x * cc.winSize.width / 7 + 50;
         this.setPosition(startX, cc.winSize.height + 100);
         //console.log(startX);
         var moveAction = cc.MoveTo.create(5, new cc.Point(startX, -100));
