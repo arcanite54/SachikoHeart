@@ -13,7 +13,12 @@ var TitleMainLayer = cc.Layer.extend({
         this._super();
         var backgroundLayer = new cc.LayerColor(cc.color(255, 202, 222, 255));
         this.addChild(backgroundLayer);
-
+        var img = new cc.Sprite(res.img_title);
+        img.attr({
+            x: cc.winSize.width / 2,
+            y: cc.winSize.height / 2
+        });
+        this.addChild(img, 0);
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,

@@ -67,12 +67,12 @@ var GameMainLayer = cc.Layer.extend({
         if (this.isDead) return;
         this.time++;
         //this.player.update();
-        this.scoreLabel.setString("スコア:" + this.player.getScore());
-        this.HPLabel.setString("残りHP:" + this.player.getHP());
+        this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
+        this.HPLabel.setString("KP:" + this.player.getHP());
 
         if (this.player.getHP() <= 0) {
             //cc.director.runScene(new Result());
-            this.resultLabel.setString("スコア:" + this.player.getScore());
+            this.resultLabel.setString("スコア:" + Math.round(this.time / 60));
             this.addChild(this.resultLabel, 1);
             this.addChild(this.resultLabel2, 1);
             //this.player.changeIsMove();
@@ -85,8 +85,10 @@ var GameMainLayer = cc.Layer.extend({
             this.enemyList[i]._update(this.player);
         }
 
-        var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
-        var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
+        //var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
+        //var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
+        var h_t = 107;
+        var e_t = 191;
         //console.log(h_t, e_t);
         if (this.time % h_t == 0) this.preAddHeart();
         if (this.time % e_t == 0) this.preAddEnemy();
@@ -156,9 +158,9 @@ var Player = cc.Sprite.extend({
 
         this.setPosition(size.width / 2, size.height / 4);
         this.targetX = this.getPosition().x;
-        this.speed = 5;
-        this.score = 0;
-        this.HP = 3;
+        this.speed = 10;
+        //this.score = 0;
+        this.HP = 15;
         this.actionList = [];
         this.preMoveX = 0;
         this.isMove = false;
@@ -188,13 +190,11 @@ var Player = cc.Sprite.extend({
         this.targetX = _x;
     },
     scorePlus: function (_x) {
-        this.score += _x;
-    },
-    getScore: function () {
-        return this.score;
+        //        this.score += _x;
+        this.HP += _x;
     },
     damage: function () {
-        this.HP -= 1;
+        this.HP -= 5;
     },
     getHP: function () {
         return this.HP;
