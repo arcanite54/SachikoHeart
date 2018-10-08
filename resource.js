@@ -3,7 +3,8 @@ var res = {
     img_heart1: "./res/heart1.png",
     img_heart3: "./res/heart3.png",
     img_enemy: "./res/enemy.png",
-    img_title: "./res/title.png"
+    img_title: "./res/title.png",
+    img_back: "./res/back.png"
 };
 
 var g_resources = [];

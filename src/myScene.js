@@ -14,9 +14,14 @@ var GameMainLayer = cc.Layer.extend({
     //コンストラクタ
     ctor: function () {
         this._super();
-        var backgroundLayer = new cc.LayerColor(cc.color(170, 202, 222, 255));
-        this.addChild(backgroundLayer);
-
+        //var backgroundLayer = new cc.LayerColor(cc.color(170, 202, 222, 255));
+        //this.addChild(backgroundLayer);
+        var back_img = new cc.Sprite(res.img_back);
+        back_img.attr({
+            x: cc.winSize.width / 2,
+            y: cc.winSize.height / 2
+        });
+        this.addChild(back_img, 0);
         this.player = new Player();
         this.addChild(this.player, 0);
         this.time = 0;
@@ -89,36 +94,39 @@ var GameMainLayer = cc.Layer.extend({
         //var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
         var h_t = 107;
         var e_t = 191;
+        //var f_t = Math.max(1.5, 5 - this.time / 1000);
+        var f_t = 1;
+        //console.log(f_t);
         //console.log(h_t, e_t);
-        if (this.time % h_t == 0) this.preAddHeart();
-        if (this.time % e_t == 0) this.preAddEnemy();
+        if (this.time % h_t == 0) this.preAddHeart(f_t);
+        if (this.time % e_t == 0) this.preAddEnemy(f_t);
 
 
 
     },
-    addHeart: function (_i) {
+    addHeart: function (_i, _t) {
         var heart = new Heart();
-        heart.init(_i);
+        heart.init(_i, _t);
         this.addChild(heart, 1);
         this.heartList.push(heart);
     },
-    addEnemy: function (_i) {
+    addEnemy: function (_i, _t) {
         var enemy = new Enemy();
-        enemy.init(_i);
+        enemy.init(_i, _t);
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
     },
-    preAddHeart: function () {
+    preAddHeart: function (_t) {
         for (var i = 0; i < 7; i++) {
-            if (Math.floor(Math.random() * 10) < 4) this.addHeart(i);
+            if (Math.floor(Math.random() * 10) < 4) this.addHeart(i, _t);
         }
     },
-    preAddEnemy: function () {
-        var k = Math.floor(Math.random() * 7.9);
+    preAddEnemy: function (_t) {
+        var k = Math.floor(Math.random() * 6.9);
         for (var i = 0; i < 7; i++) {
             if (i == k) continue;
             if (Math.floor(Math.random() * 10) < 7) {
-                this.addEnemy(i);
+                this.addEnemy(i, _t);
             }
         }
 
@@ -156,9 +164,9 @@ var Player = cc.Sprite.extend({
         var size = cc.winSize;
         //this.initWithFile(res.img_sachiko);
 
-        this.setPosition(size.width / 2, size.height / 4);
+        this.setPosition(size.width / 2, size.height / 6);
         this.targetX = this.getPosition().x;
-        this.speed = 10;
+        this.speed = 15;
         //this.score = 0;
         this.HP = 15;
         this.actionList = [];
@@ -168,8 +176,26 @@ var Player = cc.Sprite.extend({
     update: function (dt) {
         this._super();
         var moveX = this.getPosition().x - this.targetX > 0 ? -this.speed : this.speed;
-        if (Math.abs(this.getPosition().x - this.targetX) < this.speed) moveX = 0;
-        this.setPosition(this.getPosition().x + moveX, this.getPosition().y);
+        var nextX = this.getPosition().x + moveX;
+        if (Math.abs(this.getPosition().x - this.targetX) < this.speed) {
+            //moveX = 0;
+            //if (Math.abs(this.getPosition().x - this.targetX) < cc.winSize.width / 7) {
+            moveX = 0;
+            nextX = Math.floor(this.targetX / cc.winSize.width * 7) * cc.winSize.width / 7 + cc.winSize.width / 14;
+            this.targetX = nextX;
+        }
+        console.log(moveX);
+        //console.log(Math.floor(this.targetX / cc.winSize.width * 7));
+
+        //nextX = Math.round(this.targetX / cc.winSize.width) * 7 + 50;
+
+
+        //var a = Math.floor(this.targetX / cc.winSize.width * 7) * 107;
+        //if (moveX == 0 && a <= this.getPosition().x && this.getPosition().x < a + 107) nextX = a + 53;
+
+
+        //console.log(nextX);
+        this.setPosition(nextX, this.getPosition().y);
         //console.log(this.score);
         if (this.preMoveX != moveX) this.animation(moveX);
         this.preMoveX = moveX;
@@ -216,15 +242,16 @@ var FallObj = cc.Sprite.extend({
     ctor: function (_x) {
         this._super();
     },
-    init: function (_x) {
+    init: function (_x, _t) {
         this.x = _x;
+        this.t = _t;
     },
     onEnter: function () {
         this._super();
         var startX = this.x * cc.winSize.width / 7 + 50;
         this.setPosition(startX, cc.winSize.height + 100);
         //console.log(startX);
-        var moveAction = cc.MoveTo.create(5, new cc.Point(startX, -100));
+        var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -100));
         this.runAction(moveAction);
         this.scheduleUpdate();
     },
