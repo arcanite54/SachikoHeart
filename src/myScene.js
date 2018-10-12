@@ -25,7 +25,13 @@ var GameMainLayer = cc.Layer.extend({
         this.player = new Player();
         this.addChild(this.player, 0);
         this.time = 0;
+        this.time2 = 0;
+        this.cycle = 1200;
+        this.fallSpeed = 5;
+        this.hardLine = Math.round(Math.random() * 4.9);
         this.isDead = false;
+        this.warnBox = new cc.Sprite(res.img_warn);
+        this.addChild(this.warnBox, 2);
         //ここレイヤの外で定義したいけど。
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -71,6 +77,7 @@ var GameMainLayer = cc.Layer.extend({
     update: function (dt) {
         if (this.isDead) return;
         this.time++;
+        this.time2++;
         //this.player.update();
         this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
         this.HPLabel.setString("KP:" + this.player.getHP());
@@ -92,17 +99,42 @@ var GameMainLayer = cc.Layer.extend({
 
         //var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
         //var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
-        var h_t = 107;
-        var e_t = 191;
+        //var h_t = 107;
+        //var e_t = 191;
         //var f_t = Math.max(1.5, 5 - this.time / 1000);
-        var f_t = 1;
+        //var f_t = 2;
         //console.log(f_t);
         //console.log(h_t, e_t);
-        if (this.time % h_t == 0) this.preAddHeart(f_t);
-        if (this.time % e_t == 0) this.preAddEnemy(f_t);
+        console.log(this.time2);
+        //if (this.time2 < this.cycle * 3 / 5) {
+        if (this.time2 % 90 == 0) this.normalPhase();
+        //}
+        if (Math.round(this.cycle * 3 / 5) == this.time2) {
+            this.warnBox.runAction(new cc.fadeIn(0));
+            this.warnBox.setPosition(this.hardLine * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 50);
+            this.warnBox.runAction(new cc.blink(3, 9));
+        }
+        if (this.cycle * 4 / 5 <= this.time2) this.hardPhase();
 
 
+        if (this.time2 > this.cycle) {
+            this.time2 = 0;
+            this.cycle = Math.max(this.cycle - 60, 360);
+            this.fallSpeed = Math.max(this.fallSpeed - 0.5, 1.2);
+            this.hardLine = Math.round(Math.random() * 4.9);
+            this.warnBox.runAction(new cc.fadeOut(0));
 
+        }
+    },
+    normalPhase: function () {
+        for (var i = 0; i < 5; i++) {
+            var n = Math.floor(Math.random() * 10);
+            if (n < 2) this.addHeart(i, this.fallSpeed);
+            else if (7 <= n) this.addEnemy(i, this.fallSpeed);
+        }
+    },
+    hardPhase: function () {
+        this.addEnemy(this.hardLine, 1);
     },
     addHeart: function (_i, _t) {
         var heart = new Heart();
@@ -117,13 +149,13 @@ var GameMainLayer = cc.Layer.extend({
         this.enemyList.push(enemy);
     },
     preAddHeart: function (_t) {
-        for (var i = 0; i < 7; i++) {
+        for (var i = 0; i < 5; i++) {
             if (Math.floor(Math.random() * 10) < 4) this.addHeart(i, _t);
         }
     },
     preAddEnemy: function (_t) {
         var k = Math.floor(Math.random() * 6.9);
-        for (var i = 0; i < 7; i++) {
+        for (var i = 0; i < 5; i++) {
             if (i == k) continue;
             if (Math.floor(Math.random() * 10) < 7) {
                 this.addEnemy(i, _t);
@@ -168,7 +200,7 @@ var Player = cc.Sprite.extend({
         this.targetX = this.getPosition().x;
         this.speed = 15;
         //this.score = 0;
-        this.HP = 15;
+        this.HP = 15000;
         this.actionList = [];
         this.preMoveX = 0;
         this.isMove = false;
@@ -181,10 +213,10 @@ var Player = cc.Sprite.extend({
             //moveX = 0;
             //if (Math.abs(this.getPosition().x - this.targetX) < cc.winSize.width / 7) {
             moveX = 0;
-            nextX = Math.floor(this.targetX / cc.winSize.width * 7) * cc.winSize.width / 7 + cc.winSize.width / 14;
+            nextX = Math.floor(this.targetX / cc.winSize.width * 5) * cc.winSize.width / 5 + cc.winSize.width / 10;
             this.targetX = nextX;
         }
-        console.log(moveX);
+        //console.log(moveX);
         //console.log(Math.floor(this.targetX / cc.winSize.width * 7));
 
         //nextX = Math.round(this.targetX / cc.winSize.width) * 7 + 50;
@@ -248,7 +280,7 @@ var FallObj = cc.Sprite.extend({
     },
     onEnter: function () {
         this._super();
-        var startX = this.x * cc.winSize.width / 7 + 50;
+        var startX = this.x * cc.winSize.width / 5 + cc.winSize.width / 10;
         this.setPosition(startX, cc.winSize.height + 100);
         //console.log(startX);
         var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -100));
