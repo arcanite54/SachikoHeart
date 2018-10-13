@@ -23,7 +23,7 @@ var TitleMainLayer = cc.Layer.extend({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function (touch, event) {
-                cc.director.runScene(new MyScene());
+                cc.director.runScene(new GameMainScene());
                 return true;
             }
         });
