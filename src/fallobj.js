@@ -18,7 +18,8 @@ var FallObj = cc.Sprite.extend({
         this.scheduleUpdate();
     },
     _update: function (_player) {
-        if (cc.rectIntersectsRect(_player.getBoundingBox(), this.getBoundingBox())) {
+        //if (cc.rectIntersectsRect(_player.getBoundingBox(), this.getBoundingBox())) {
+        if (cc.rectIntersectsRect(cc.rect(_player.getPosition().x, _player.getPosition().y, 50, 50), this.getBoundingBox())) {
             this.hit(_player);
             this.removeObj(this);
             //console.log("hoge");
