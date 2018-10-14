@@ -2,11 +2,11 @@
 var WarnBox = cc.Sprite.extend({
     ctor: function () {
         this._super();
-        var size = cc.winSize;
+        //var size = cc.winSize;
         //this.initWithFile(res.img_sachiko);
-        this.initWithFile(res.img_warn);
+        //this.initWithFile(res.img_warn);
         //this.runAction(new cc.fadeOut(0));
-        this.count = 0;
+        //this.count = 0;
     },
     init: function (_l, _t) {
         this.l = _l;
@@ -25,5 +25,27 @@ var WarnBox = cc.Sprite.extend({
         this._super();
         this.count++;
         if (this.count > this.t) gameLayer.removeWarn(this);
+    }
+});
+
+var WarnBox1 = WarnBox.extend({
+    ctor: function () {
+        this._super();
+        //var size = cc.winSize;
+        //this.initWithFile(res.img_sachiko);
+        this.initWithFile(res.img_warn1);
+        //this.runAction(new cc.fadeOut(0));
+        this.count = 0;
+    }
+});
+
+var WarnBox2 = WarnBox.extend({
+    ctor: function () {
+        this._super();
+        //var size = cc.winSize;
+        //this.initWithFile(res.img_sachiko);
+        this.initWithFile(res.img_warn2);
+        //this.runAction(new cc.fadeOut(0));
+        this.count = 0;
     }
 });

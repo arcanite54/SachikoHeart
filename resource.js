@@ -5,7 +5,8 @@ var res = {
     img_enemy: "./res/enemy.png",
     img_title: "./res/title.png",
     img_back: "./res/back.png",
-    img_warn: "./res/warning.png"
+    img_warn1: "./res/warning.png",
+    img_warn2: "./res/warning2.png"
 };
 
 var g_resources = [];

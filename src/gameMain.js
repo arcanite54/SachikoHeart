@@ -29,11 +29,13 @@ var GameMainLayer = cc.Layer.extend({
         this.cycle = 1200;
         this.fallSpeed = 5;
         this.fallCycle = 180;
-        this.hardLineList = []
-        this.hardLineList.push(Math.floor(Math.random() * 5));
+        this.hardLineList = [false, false, false, false, false];
+        this.hardLineList[Math.floor(Math.random() * 5)] = true;
+        //this.hardLineList.push(Math.floor(Math.random() * 5));
         this.hardStartTime = this.cycle - 60;
         this.hardEndTime = this.cycle;
         this.isDead = false;
+        this.isHard = true;//trueなら警告通りにenemyが飛んでくる
         //this.warnBox = new cc.Sprite(res.img_warn);
         //this.addChild(this.warnBox, 2);
         //this.warnBox.runAction(new cc.fadeOut(0));
@@ -109,17 +111,19 @@ var GameMainLayer = cc.Layer.extend({
         //console.log(preWarn);
         if (preWarn == this.time2) {
             //forEachがつかえないっぽい
-            for (var i = 0; i < this.hardLineList.length; i++) {
-                var w = new WarnBox();
-                w.init(this.hardLineList[i], this.hardStartTime - preWarn);
+            for (var i = 0; i < 5; i++) {
+                if (this.hardLineList[i] != this.isHard) continue;
+                var w = this.isHard ? new WarnBox1() : new WarnBox2;
+                w.init(i, this.hardStartTime - preWarn);
                 this.addChild(w, 2);
             }
         }
         //if (this.time2 == this.hardStartTime)
         //    this.warnBox.runAction(new cc.fadeOut(0));
         if (this.hardStartTime <= this.time2 && this.time2 <= this.hardEndTime)
-            for (var i = 0; i < this.hardLineList.length; i++) {
-                this.hardPhase(this.hardLineList[i]);
+            for (var i = 0; i < 5; i++) {
+                if (!this.hardLineList[i]) continue;
+                this.hardPhase(i);
             }
 
 
@@ -143,24 +147,24 @@ var GameMainLayer = cc.Layer.extend({
     endPhase: function () {
         this.time2 = 0;
         this.cycle = Math.max(this.cycle - 60, 360);
-        this.fallSpeed = Math.max(this.fallSpeed - 0.5, 1.5);
+        this.fallSpeed = Math.max(this.fallSpeed - 0.5, 2.0);
         this.fallCycle = Math.max(this.fallCycle - Math.random() * 10 + 3, 60);
         this.fallCycle = Math.floor(this.fallCycle);
-        var array = [];
-        for (var i = 0; i < 4; i++) {
-            array.push(Math.floor(Math.random() * 5));
+        this.isHard = Math.random() < 0.5 ? true : false;
+
+        for (var i = 0; i < 5; i++) {
+            this.hardLineList[i] = Math.random() < 0.5 ? true : false;
         }
-        this.hardLineList = array.filter(function (x, i, self) {
-            return self.indexOf(x) === i
-        });//重複を除去しているらしい
+        this.hardLineList[Math.floor(Math.random() * 5)] = !this.isHard;
+        //重複を除去しているらしい
         //this.hardLine = Math.floor(Math.random() * 5);
         //this.warnBox.runAction(new cc.fadeOut(0));
         this.hardStartTime = Math.floor(Math.random() * (this.cycle - 120) + 60);
         this.hardStartTime = Math.max(this.hardStartTime, 0);
         this.hardEndTime = this.hardStartTime + (Math.random() * 0.9 + 0.1) * 60;
         this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
-        console.log(this.hardStartTime);
-        console.log(this.hardEndTime);
+        //console.log(this.hardStartTime);
+        //console.log(this.hardEndTime);
     },
     addHeart: function (_i, _t) {
         var heart = new Heart();
