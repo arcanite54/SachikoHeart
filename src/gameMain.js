@@ -28,11 +28,15 @@ var GameMainLayer = cc.Layer.extend({
         this.time2 = 0;
         this.cycle = 1200;
         this.fallSpeed = 5;
-        this.hardLine = Math.round(Math.random() * 4.9);
+        this.fallCycle = 180;
+        this.hardLineList = []
+        this.hardLineList.push(Math.floor(Math.random() * 5));
+        this.hardStartTime = this.cycle - 60;
+        this.hardEndTime = this.cycle;
         this.isDead = false;
-        this.warnBox = new cc.Sprite(res.img_warn);
-        this.addChild(this.warnBox, 2);
-        this.warnBox.runAction(new cc.fadeOut(0));
+        //this.warnBox = new cc.Sprite(res.img_warn);
+        //this.addChild(this.warnBox, 2);
+        //this.warnBox.runAction(new cc.fadeOut(0));
         //ここレイヤの外で定義したいけど。
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -98,44 +102,65 @@ var GameMainLayer = cc.Layer.extend({
             this.enemyList[i]._update(this.player);
         }
 
-        //var h_t = Math.round((Math.max(61, 120 - this.time / 50)));
-        //var e_t = Math.round((Math.max(37, 370 - this.time / 10)));
-        //var h_t = 107;
-        //var e_t = 191;
-        //var f_t = Math.max(1.5, 5 - this.time / 1000);
-        //var f_t = 2;
-        //console.log(f_t);
-        //console.log(h_t, e_t);
-        console.log(this.time2);
-        //if (this.time2 < this.cycle * 3 / 5) {
-        if (this.time2 % 90 == 0) this.normalPhase();
-        //}
-        if (Math.round(this.cycle * 3 / 5) == this.time2) {
-            this.warnBox.runAction(new cc.fadeIn(0));
-            this.warnBox.setPosition(this.hardLine * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 50);
-            this.warnBox.runAction(new cc.blink(3, 9));
+
+        if (this.time2 % this.fallCycle == 0) this.normalPhase();
+
+        var preWarn = Math.max(Math.floor(this.hardStartTime - 180 * this.cycle / 1200), 0);
+        //console.log(preWarn);
+        if (preWarn == this.time2) {
+            //forEachがつかえないっぽい
+            for (var i = 0; i < this.hardLineList.length; i++) {
+                var w = new WarnBox();
+                w.init(this.hardLineList[i], this.hardStartTime - preWarn);
+                this.addChild(w, 2);
+            }
         }
-        if (this.cycle * 4 / 5 <= this.time2) this.hardPhase();
+        //if (this.time2 == this.hardStartTime)
+        //    this.warnBox.runAction(new cc.fadeOut(0));
+        if (this.hardStartTime <= this.time2 && this.time2 <= this.hardEndTime)
+            for (var i = 0; i < this.hardLineList.length; i++) {
+                this.hardPhase(this.hardLineList[i]);
+            }
 
 
         if (this.time2 > this.cycle) {
-            this.time2 = 0;
-            this.cycle = Math.max(this.cycle - 60, 360);
-            this.fallSpeed = Math.max(this.fallSpeed - 0.5, 1.2);
-            this.hardLine = Math.round(Math.random() * 4.9);
-            this.warnBox.runAction(new cc.fadeOut(0));
-
+            this.endPhase();
         }
     },
     normalPhase: function () {
+        var k = Math.floor((Math.random() * 6));
+        this.addHeart(k, this.fallSpeed + (Math.random() * 2 - 1));
         for (var i = 0; i < 5; i++) {
+            if (i == k) continue;
             var n = Math.floor(Math.random() * 10);
-            if (n < 2) this.addHeart(i, this.fallSpeed);
-            else if (7 <= n) this.addEnemy(i, this.fallSpeed);
+            if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 1));
+            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1));
         }
     },
-    hardPhase: function () {
-        this.addEnemy(this.hardLine, 1);
+    hardPhase: function (_l) {
+        this.addEnemy(_l, 1);
+    },
+    endPhase: function () {
+        this.time2 = 0;
+        this.cycle = Math.max(this.cycle - 60, 360);
+        this.fallSpeed = Math.max(this.fallSpeed - 0.5, 1.5);
+        this.fallCycle = Math.max(this.fallCycle - Math.random() * 10 + 3, 60);
+        this.fallCycle = Math.floor(this.fallCycle);
+        var array = [];
+        for (var i = 0; i < 4; i++) {
+            array.push(Math.floor(Math.random() * 5));
+        }
+        this.hardLineList = array.filter(function (x, i, self) {
+            return self.indexOf(x) === i
+        });//重複を除去しているらしい
+        //this.hardLine = Math.floor(Math.random() * 5);
+        //this.warnBox.runAction(new cc.fadeOut(0));
+        this.hardStartTime = Math.floor(Math.random() * (this.cycle - 120) + 60);
+        this.hardStartTime = Math.max(this.hardStartTime, 0);
+        this.hardEndTime = this.hardStartTime + (Math.random() * 0.9 + 0.1) * 60;
+        this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
+        console.log(this.hardStartTime);
+        console.log(this.hardEndTime);
     },
     addHeart: function (_i, _t) {
         var heart = new Heart();
@@ -172,8 +197,10 @@ var GameMainLayer = cc.Layer.extend({
     removeEnemy: function (_obj) {
         this.removeChild(_obj);
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);
+    },
+    removeWarn: function (_obj) {
+        this.removeChild(_obj);
     }
-
 });
 /*
 var listener = cc.EventListener.create({
