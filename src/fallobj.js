@@ -13,7 +13,7 @@ var FallObj = cc.Sprite.extend({
         var startX = this.x * cc.winSize.width / 5 + cc.winSize.width / 10;
         this.setPosition(startX, cc.winSize.height + 100);
         //console.log(startX);
-        var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -100));
+        var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -100));//ここどうしよう
         this.runAction(moveAction);
         this.scheduleUpdate();
     },
@@ -62,6 +62,22 @@ var Enemy = FallObj.extend({
         this._super();
         this.initWithFile(res.img_enemy);
     },
+    init: function (_x, _t, _type) {
+        this.x = _x;
+        this.t = _t;
+        this.type = _type;
+    },
+    onEnter: function () {
+        this._super();
+        if (this.type == 1) {
+            var moverr = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, cc.winSize.width - this.getPosition().x, 0);
+            var movell = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, 0 - this.getPosition().x, 0);
+            var moverl = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, -cc.winSize.width + this.getPosition().x, 0);
+            var movelr = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, this.getPosition().x, 0);
+
+            this.runAction(cc.repeatForever(cc.sequence(moverr, moverl, movell, movelr)));
+        }
+    },
     hit: function (_player) {
         _player.damage();
     },
@@ -70,3 +86,4 @@ var Enemy = FallObj.extend({
     }
 }
 );
+

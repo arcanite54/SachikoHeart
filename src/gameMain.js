@@ -138,11 +138,11 @@ var GameMainLayer = cc.Layer.extend({
             if (i == k) continue;
             var n = Math.floor(Math.random() * 10);
             if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 1));
-            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1));
+            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1), Math.floor(Math.random() * 2));
         }
     },
     hardPhase: function (_l) {
-        this.addEnemy(_l, 1);
+        this.addEnemy(_l, 1, 0);
     },
     endPhase: function () {
         this.time2 = 0;
@@ -172,9 +172,9 @@ var GameMainLayer = cc.Layer.extend({
         this.addChild(heart, 1);
         this.heartList.push(heart);
     },
-    addEnemy: function (_i, _t) {
+    addEnemy: function (_i, _t, _type) {
         var enemy = new Enemy();
-        enemy.init(_i, _t);
+        enemy.init(_i, _t, _type);
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
     },
