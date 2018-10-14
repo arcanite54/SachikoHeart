@@ -32,7 +32,7 @@ var GameMainLayer = cc.Layer.extend({
         this.hardLineList = [false, false, false, false, false];
         this.hardLineList[Math.floor(Math.random() * 5)] = true;
         //this.hardLineList.push(Math.floor(Math.random() * 5));
-        this.hardStartTime = this.cycle - 60;
+        this.hardStartTime = this.cycle - 10;
         this.hardEndTime = this.cycle;
         this.isDead = false;
         this.isHard = true;//trueなら警告通りにenemyが飛んでくる
@@ -138,7 +138,8 @@ var GameMainLayer = cc.Layer.extend({
             if (i == k) continue;
             var n = Math.floor(Math.random() * 10);
             if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 1));
-            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1), Math.floor(Math.random() * 2));
+            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1), Math.floor(Math.random() * 3));
+
         }
     },
     hardPhase: function (_l) {
@@ -146,9 +147,9 @@ var GameMainLayer = cc.Layer.extend({
     },
     endPhase: function () {
         this.time2 = 0;
-        this.cycle = Math.max(this.cycle - 60, 360);
+        this.cycle = Math.max(this.cycle - 120, 360);
         this.fallSpeed = Math.max(this.fallSpeed - 0.5, 2.0);
-        this.fallCycle = Math.max(this.fallCycle - Math.random() * 10 + 3, 60);
+        this.fallCycle = Math.max(this.fallCycle - Math.random() * 10 + 3, 30);
         this.fallCycle = Math.floor(this.fallCycle);
         this.isHard = Math.random() < 0.5 ? true : false;
 
@@ -161,7 +162,7 @@ var GameMainLayer = cc.Layer.extend({
         //this.warnBox.runAction(new cc.fadeOut(0));
         this.hardStartTime = Math.floor(Math.random() * (this.cycle - 120) + 60);
         this.hardStartTime = Math.max(this.hardStartTime, 0);
-        this.hardEndTime = this.hardStartTime + (Math.random() * 0.9 + 0.1) * 60;
+        this.hardEndTime = this.hardStartTime + (Math.random() * 9 + 1);
         this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
         //console.log(this.hardStartTime);
         //console.log(this.hardEndTime);

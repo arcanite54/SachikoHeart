@@ -60,22 +60,34 @@ var Heart = FallObj.extend({
 var Enemy = FallObj.extend({
     ctor: function () {
         this._super();
-        this.initWithFile(res.img_enemy);
     },
     init: function (_x, _t, _type) {
         this.x = _x;
         this.t = _t;
         this.type = _type;
+        switch (this.type) {
+            case 0: this.initWithFile(res.img_enemy_mush); break;
+            case 1: this.initWithFile(res.img_enemy_ball); break;
+            case 2: this.initWithFile(res.img_enemy_ghost); break;
+        }
     },
     onEnter: function () {
         this._super();
-        if (this.type == 1) {
-            var moverr = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, cc.winSize.width - this.getPosition().x, 0);
-            var movell = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, 0 - this.getPosition().x, 0);
-            var moverl = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, -cc.winSize.width + this.getPosition().x, 0);
-            var movelr = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, this.getPosition().x, 0);
+        switch (this.type) {
+            case 1:
+                var moverr = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, cc.winSize.width - this.getPosition().x, 0);
+                var movell = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, 0 - this.getPosition().x, 0);
+                var moverl = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, -cc.winSize.width + this.getPosition().x, 0);
+                var movelr = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, this.getPosition().x, 0);
 
-            this.runAction(cc.repeatForever(cc.sequence(moverr, moverl, movell, movelr)));
+                this.runAction(cc.repeatForever(cc.sequence(moverr, moverl, movell, movelr)));
+                break;
+            case 2:
+                var move1 = cc.moveBy(2, 150, 0).easing(cc.easeSineInOut());
+                var move2 = cc.moveBy(2, -150, 0).easing(cc.easeSineInOut());
+
+                this.runAction(cc.repeatForever(cc.sequence(move1, move2)));
+                break;
         }
     },
     hit: function (_player) {
