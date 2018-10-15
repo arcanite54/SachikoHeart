@@ -5,11 +5,11 @@ var Player = cc.Sprite.extend({
         var size = cc.winSize;
         //this.initWithFile(res.img_sachiko);
 
-        this.setPosition(size.width / 2, size.height / 6);
+        this.setPosition(size.width / 2, size.height / 8);
         this.targetX = this.getPosition().x;
         this.speed = 15;
         //this.score = 0;
-        this.HP = 15000;
+        this.HP = 60000;
         this.actionList = [];
         this.preMoveX = 0;
         this.isMove = false;
@@ -61,7 +61,7 @@ var Player = cc.Sprite.extend({
         this.HP += _x;
     },
     damage: function () {
-        this.HP -= 5;
+        this.HP -= 20;
     },
     getHP: function () {
         return this.HP;

@@ -15,7 +15,7 @@ var WarnBox = cc.Sprite.extend({
     onEnter: function () {
         this._super();
         //this.runAction(new cc.fadeIn(0));
-        this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 50);
+        this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 100);
         this.runAction(new cc.blink(this.t / 60, 6));
 
 

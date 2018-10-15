@@ -83,8 +83,7 @@ var GameMainLayer = cc.Layer.extend({
     },
     update: function (dt) {
         if (this.isDead) return;
-        this.time++;
-        this.time2++;
+
         //this.player.update();
         this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
         this.HPLabel.setString("KP:" + this.player.getHP());
@@ -126,10 +125,12 @@ var GameMainLayer = cc.Layer.extend({
                 this.hardPhase(i);
             }
 
-
+        this.time++;
+        this.time2++;
         if (this.time2 > this.cycle) {
             this.endPhase();
         }
+
     },
     normalPhase: function () {
         var k = Math.floor((Math.random() * 6));
@@ -137,33 +138,34 @@ var GameMainLayer = cc.Layer.extend({
         for (var i = 0; i < 5; i++) {
             if (i == k) continue;
             var n = Math.floor(Math.random() * 10);
-            if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 1));
+            if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 0.5));
             else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1), Math.floor(Math.random() * 3));
 
         }
     },
     hardPhase: function (_l) {
-        this.addEnemy(_l, 1, 0);
+        this.addEnemy(_l, 1, 3);
     },
     endPhase: function () {
         this.time2 = 0;
         this.cycle = Math.max(this.cycle - 120, 360);
-        this.fallSpeed = Math.max(this.fallSpeed - 0.5, 2.0);
-        this.fallCycle = Math.max(this.fallCycle - Math.random() * 10 + 3, 30);
+        this.fallSpeed = Math.max(this.fallSpeed - 0.3, 2.0);
+        this.fallCycle = Math.max(this.fallCycle - Math.random() * 30 + 5, 30);
         this.fallCycle = Math.floor(this.fallCycle);
+        console.log(this.fallCycle);
         this.isHard = Math.random() < 0.5 ? true : false;
 
         for (var i = 0; i < 5; i++) {
             this.hardLineList[i] = Math.random() < 0.5 ? true : false;
         }
-        this.hardLineList[Math.floor(Math.random() * 5)] = !this.isHard;
-        //重複を除去しているらしい
+        this.hardLineList[Math.floor(Math.random() * 5)] = false;
         //this.hardLine = Math.floor(Math.random() * 5);
         //this.warnBox.runAction(new cc.fadeOut(0));
-        this.hardStartTime = Math.floor(Math.random() * (this.cycle - 120) + 60);
+        this.hardStartTime = Math.floor(Math.random() * (this.cycle - 60) + 60);
         this.hardStartTime = Math.max(this.hardStartTime, 0);
-        this.hardEndTime = this.hardStartTime + (Math.random() * 9 + 1);
+        this.hardEndTime = this.hardStartTime + Math.random() * 9 + 2;
         this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
+        console.assert(this.hardStartTime != this.hardEndTime);
         //console.log(this.hardStartTime);
         //console.log(this.hardEndTime);
     },

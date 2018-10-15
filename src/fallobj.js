@@ -69,22 +69,23 @@ var Enemy = FallObj.extend({
             case 0: this.initWithFile(res.img_enemy_mush); break;
             case 1: this.initWithFile(res.img_enemy_ball); break;
             case 2: this.initWithFile(res.img_enemy_ghost); break;
+            case 3: this.initWithFile(res.img_enemy_flower); break;
         }
     },
     onEnter: function () {
         this._super();
         switch (this.type) {
             case 1:
-                var moverr = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, cc.winSize.width - this.getPosition().x, 0);
-                var movell = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, 0 - this.getPosition().x, 0);
-                var moverl = cc.MoveBy.create(3 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, -cc.winSize.width + this.getPosition().x, 0);
-                var movelr = cc.MoveBy.create(3 * this.getPosition().x / cc.winSize.width, this.getPosition().x, 0);
+                var moverr = cc.MoveBy.create(3 * this.t / 5 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, cc.winSize.width - this.getPosition().x, 0);
+                var movell = cc.MoveBy.create(3 * this.t / 5 * this.getPosition().x / cc.winSize.width, 0 - this.getPosition().x, 0);
+                var moverl = cc.MoveBy.create(3 * this.t / 5 * Math.abs(cc.winSize.width - this.getPosition().x) / cc.winSize.width, -cc.winSize.width + this.getPosition().x, 0);
+                var movelr = cc.MoveBy.create(3 * this.t / 5 * this.getPosition().x / cc.winSize.width, this.getPosition().x, 0);
 
                 this.runAction(cc.repeatForever(cc.sequence(moverr, moverl, movell, movelr)));
                 break;
             case 2:
-                var move1 = cc.moveBy(2, 150, 0).easing(cc.easeSineInOut());
-                var move2 = cc.moveBy(2, -150, 0).easing(cc.easeSineInOut());
+                var move1 = cc.moveBy(2 * this.t / 5, 150, 0).easing(cc.easeSineInOut());
+                var move2 = cc.moveBy(2 * this.t / 5, -150, 0).easing(cc.easeSineInOut());
 
                 this.runAction(cc.repeatForever(cc.sequence(move1, move2)));
                 break;
