@@ -64,7 +64,7 @@ var Player = cc.Sprite.extend({
         this.HP -= 20;
     },
     getHP: function () {
-        return this.HP;
+        return Math.max(this.HP, 0);
     },
     animation: function (dx) {
         var act = dx > 0 ? 2 : 1;//ここもっとうまいこと書けそう感

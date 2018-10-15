@@ -1,4 +1,3 @@
-//このへんグローバルにしていいのか？
 var gameLayer;
 
 var GameMainScene = cc.Scene.extend({
@@ -55,9 +54,9 @@ var GameMainLayer = cc.Layer.extend({
         });
         cc.eventManager.addListener(listener, this);
 
-        this.scoreLabel = cc.LabelTTF.create("スコア:", "Arial", 40);
-        this.scoreLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 90);
-        this.scoreLabel.setColor(cc.color(255, 255, 255));
+        //this.scoreLabel = cc.LabelTTF.create("", "Arial", 40);
+        //this.scoreLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 90);
+        //this.scoreLabel.setColor(cc.color(0, 0, 0));
 
         this.resultLabel = cc.LabelTTF.create("スコア:", "Arial", 80);
         this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
@@ -67,12 +66,12 @@ var GameMainLayer = cc.Layer.extend({
         this.resultLabel2.setColor(cc.color(255, 0, 0));
 
 
-        this.HPLabel = cc.LabelTTF.create("残りHP:", "Arial", 40);
+        this.HPLabel = cc.LabelTTF.create("", "Arial", 40);
         this.HPLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 50);
-        this.HPLabel.setColor(cc.color(255, 255, 255));
+        this.HPLabel.setColor(cc.color(0, 0, 0));
         this.heartList = [];
         this.enemyList = [];
-        this.addChild(this.scoreLabel, 1);
+        //this.addChild(this.scoreLabel, 1);
         this.addChild(this.HPLabel, 1);
 
         this.scheduleUpdate();
@@ -82,12 +81,13 @@ var GameMainLayer = cc.Layer.extend({
 
     },
     update: function (dt) {
+        this.HPLabel.setPosition(this.player.getPosition().x, this.player.getPosition().y + 120);
         if (this.isDead) return;
 
         //this.player.update();
-        this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
-        this.HPLabel.setString("KP:" + this.player.getHP());
-        console.log(this.heartList.length);
+        //this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
+        this.HPLabel.setString(this.player.getHP());
+        //console.log(this.heartList.length);
         if (this.player.getHP() <= 0) {
             //cc.director.runScene(new Result());
             this.resultLabel.setString("スコア:" + Math.round(this.time / 60));
