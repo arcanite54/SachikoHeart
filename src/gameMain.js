@@ -87,7 +87,7 @@ var GameMainLayer = cc.Layer.extend({
         //this.player.update();
         this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
         this.HPLabel.setString("KP:" + this.player.getHP());
-
+        console.log(this.heartList.length);
         if (this.player.getHP() <= 0) {
             //cc.director.runScene(new Result());
             this.resultLabel.setString("スコア:" + Math.round(this.time / 60));
@@ -198,12 +198,13 @@ var GameMainLayer = cc.Layer.extend({
     },
     //この二つのremoveまとめられそうだけど．
     removeHeart: function (_obj) {
-        this.removeChild(_obj);
         this.heartList.splice(this.heartList.indexOf(_obj), 1);
+        this.removeChild(_obj);
+        console.log("delete")
     },
     removeEnemy: function (_obj) {
-        this.removeChild(_obj);
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);
+        this.removeChild(_obj);
     },
     removeWarn: function (_obj) {
         this.removeChild(_obj);

@@ -11,9 +11,9 @@ var FallObj = cc.Sprite.extend({
     onEnter: function () {
         this._super();
         var startX = this.x * cc.winSize.width / 5 + cc.winSize.width / 10;
-        this.setPosition(startX, cc.winSize.height + 100);
+        this.setPosition(startX, cc.winSize.height + 50);
         //console.log(startX);
-        var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -100));//ここどうしよう
+        var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -50));//ここどうしよう
         this.runAction(moveAction);
         this.scheduleUpdate();
     },
@@ -24,7 +24,7 @@ var FallObj = cc.Sprite.extend({
             this.removeObj(this);
             //console.log("hoge");
         }
-        if (this.getPosition().y < -100) {
+        if (this.getPosition().y <= -30) {
             this.removeObj(this);
         }
     },
