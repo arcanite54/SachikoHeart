@@ -24,7 +24,7 @@ var WarnBox = cc.Sprite.extend({
     update: function () {
         this._super();
         this.count++;
-        if (this.count > this.t) gameLayer.removeWarn(this);
+        if (this.count > this.t) gameLayer.removeObjOnly(this);
     }
 });
 

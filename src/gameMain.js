@@ -20,6 +20,7 @@ var GameMainLayer = cc.Layer.extend({
             x: cc.winSize.width / 2,
             y: cc.winSize.height / 2
         });
+        this.effectCircleList = [];
         this.addChild(back_img, 0);
         this.player = new Player();
         this.addChild(this.player, 0);
@@ -38,6 +39,11 @@ var GameMainLayer = cc.Layer.extend({
         //this.warnBox = new cc.Sprite(res.img_warn);
         //this.addChild(this.warnBox, 2);
         //this.warnBox.runAction(new cc.fadeOut(0));
+
+
+        // var touchEffectCircle = ;
+        // this.addChild(fillCircle);
+
         //ここレイヤの外で定義したいけど。
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -48,7 +54,8 @@ var GameMainLayer = cc.Layer.extend({
                 //var location = target.convertToNodeSpace(touch.getLocation());
                 //var targetSize = target.getContentSize();
                 //var targetRectangle = cc.rect(0,0,targetSize.width,targetSize.height);
-                target.player.changeTargetX(touch.getLocation().x);
+                target.player.changeTargetX(touch.getLocation().x);//ここなんでtargetなんだろう
+                target.addEffectCircle(touch.getLocation());
                 return true;
             }
         });
@@ -181,6 +188,15 @@ var GameMainLayer = cc.Layer.extend({
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
     },
+    addEffectCircle: function (_p) {
+        //var c = cc.DrawNode();
+        // var circle = new cc.DrawNode().drawDot(cc.p(_p.x, _p.y), 50, cc.color(255, 0, 0));
+        // this.effectCircleList.push(circle);
+        // this.addChild(circle, 2);
+        var circle = new EffectCircle();//なんでcc.DrawNode()できないんじゃい
+        circle.init(_p.x, _p.y);
+        this.addChild(circle, 2);
+    },
     preAddHeart: function (_t) {
         for (var i = 0; i < 5; i++) {
             if (Math.floor(Math.random() * 10) < 4) this.addHeart(i, _t);
@@ -206,7 +222,7 @@ var GameMainLayer = cc.Layer.extend({
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);
         this.removeChild(_obj);
     },
-    removeWarn: function (_obj) {
+    removeObjOnly: function (_obj) {
         this.removeChild(_obj);
     }
 });

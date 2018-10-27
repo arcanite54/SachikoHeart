@@ -10,7 +10,8 @@ var res = {
     img_title: "./res/title.png",
     img_back: "./res/back.png",
     img_warn1: "./res/warning.png",
-    img_warn2: "./res/warning2.png"
+    img_warn2: "./res/warning2.png",
+    img_effectCircle: "./res/effectCircle.png"
 };
 
 var g_resources = [];
