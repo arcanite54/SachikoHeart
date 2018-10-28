@@ -17,12 +17,12 @@ var WarnBox = cc.Sprite.extend({
         //this.runAction(new cc.fadeIn(0));
         this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 100);
         this.runAction(new cc.blink(this.t / 60, 6));
-
-
         this.scheduleUpdate();
     },
     update: function () {
         this._super();
+        if (this.count % Math.floor(this.t / 6) == 0) cc.audioEngine.playEffect(res.se_warn);
+        //音量が重ね掛けされちゃうのどうしよう
         this.count++;
         if (this.count > this.t) gameLayer.removeObjOnly(this);
     }

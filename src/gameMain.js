@@ -13,6 +13,7 @@ var GameMainLayer = cc.Layer.extend({
     //コンストラクタ
     ctor: function () {
         this._super();
+        cc.audioEngine.playMusic(res.bgm_main, true);
         //var backgroundLayer = new cc.LayerColor(cc.color(170, 202, 222, 255));
         //this.addChild(backgroundLayer);
         var back_img = new cc.Sprite(res.img_back);
@@ -66,10 +67,10 @@ var GameMainLayer = cc.Layer.extend({
         //this.scoreLabel.setColor(cc.color(0, 0, 0));
 
         this.resultLabel = cc.LabelTTF.create("スコア:", "Arial", 80);
-        this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+        this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 100);
         this.resultLabel.setColor(cc.color(255, 0, 0));
         this.resultLabel2 = cc.LabelTTF.create("ゲームオーバー", "Arial", 60);
-        this.resultLabel2.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 90);
+        this.resultLabel2.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 190);
         this.resultLabel2.setColor(cc.color(255, 0, 0));
 
 
@@ -101,6 +102,7 @@ var GameMainLayer = cc.Layer.extend({
             this.addChild(this.resultLabel, 1);
             this.addChild(this.resultLabel2, 1);
             //this.player.changeIsMove();
+            //cc.director.runScene(new Title());
             this.isDead = true;
         }
         for (var i = 0; i < this.heartList.length; i++) {
@@ -216,7 +218,7 @@ var GameMainLayer = cc.Layer.extend({
     removeHeart: function (_obj) {
         this.heartList.splice(this.heartList.indexOf(_obj), 1);
         this.removeChild(_obj);
-        console.log("delete")
+        //console.log("delete")
     },
     removeEnemy: function (_obj) {
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);

@@ -30,7 +30,8 @@ var TitleMainLayer = cc.Layer.extend({
 
         cc.eventManager.addListener(listener, this);
 
-
+        //cc.audioEngine.playMusic(res.bgm_title, true);
+        //auto playのエラー。とりあえずタイトルのBGMなしで
 
     }
 

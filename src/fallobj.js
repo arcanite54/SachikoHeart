@@ -41,14 +41,17 @@ var Heart = FallObj.extend({
         this._super();
         if (Math.floor(Math.random() * 5) == 0) {
             this.initWithFile(res.img_heart3);
+            this.se = res.se_heart3;
             this.point = 3;
         }
         else {
             this.initWithFile(res.img_heart1);
+            this.se = res.se_heart1;
             this.point = 1;
         }
     },
     hit: function (_player) {
+        cc.audioEngine.playEffect(this.se);
         _player.scorePlus(this.point);
     },
     removeObj: function () {
@@ -92,6 +95,7 @@ var Enemy = FallObj.extend({
         }
     },
     hit: function (_player) {
+        cc.audioEngine.playEffect(res.se_damage);
         _player.damage();
     },
     removeObj: function () {

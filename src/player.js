@@ -13,6 +13,7 @@ var Player = cc.Sprite.extend({
         this.actionList = [];
         this.preMoveX = 0;
         this.isMove = false;
+
     },
     update: function (dt) {
         this._super();
