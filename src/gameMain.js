@@ -8,6 +8,7 @@ var GameMainScene = cc.Scene.extend({
     }
 });
 
+
 var GameMainLayer = cc.Layer.extend({
     //sprite:null,
     //コンストラクタ
@@ -21,8 +22,10 @@ var GameMainLayer = cc.Layer.extend({
             x: cc.winSize.width / 2,
             y: cc.winSize.height / 2
         });
-        this.effectCircleList = [];
+
         this.addChild(back_img, 0);
+
+        this.effectCircleList = [];
         this.player = new Player();
         this.addChild(this.player, 0);
         this.time = 0;
@@ -40,27 +43,23 @@ var GameMainLayer = cc.Layer.extend({
         //this.warnBox = new cc.Sprite(res.img_warn);
         //this.addChild(this.warnBox, 2);
         //this.warnBox.runAction(new cc.fadeOut(0));
-
-
-        // var touchEffectCircle = ;
-        // this.addChild(fillCircle);
-
-        //ここレイヤの外で定義したいけど。
+        //本当は外で定義したい
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
-                //var target = event.getCurrentTarget();
-                //var location = target.convertToNodeSpace(touch.getLocation());
-                //var targetSize = target.getContentSize();
-                //var targetRectangle = cc.rect(0,0,targetSize.width,targetSize.height);
+
                 target.player.changeTargetX(touch.getLocation().x);//ここなんでtargetなんだろう
+                //書いてあった↓
+                //http://mmorley.hatenablog.com/entry/2015/09/22/230549
                 target.addEffectCircle(touch.getLocation());
                 return true;
             }
         });
-        cc.eventManager.addListener(listener, this);
+        // var touchEffectCircle = ;
+        // this.addChild(fillCircle);
+        cc.eventManager.addListener(listener.clone(), this);
 
         //this.scoreLabel = cc.LabelTTF.create("", "Arial", 40);
         //this.scoreLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 90);
@@ -103,6 +102,9 @@ var GameMainLayer = cc.Layer.extend({
             this.addChild(this.resultLabel2, 1);
             //this.player.changeIsMove();
             //cc.director.runScene(new Title());
+            var retry = new RetryBox();
+            this.addChild(retry, 2);
+
             this.isDead = true;
         }
         for (var i = 0; i < this.heartList.length; i++) {
@@ -228,19 +230,34 @@ var GameMainLayer = cc.Layer.extend({
         this.removeChild(_obj);
     }
 });
-/*
-var listener = cc.EventListener.create({
-    event: cc.EventListener.TOUCH_ONE_BY_ONE,
-    swallowTouches: true,
-    onTouchBegan: function(touch,event)
-    {
-        //var target = event.getCurrentTarget();
-        //var location = target.convertToNodeSpace(touch.getLocation());
-        //var targetSize = target.getContentSize();
-        //var targetRectangle = cc.rect(0,0,targetSize.width,targetSize.height);
-        player.changeTargetX(touch.getLocation().x);
 
-    }
+
+
+
+var RetryBox = cc.Sprite.extend({
+    ctor: function () {
+        this._super();
+        this.initWithFile(res.img_retry);
+        this.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
+
+        var listener2 = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: function (touch, event) {
+                var target = event.getCurrentTarget();
+                var location = target.convertToNodeSpace(touch.getLocation());
+                var targetSize = target.getContentSize();
+                var targetRectangle = cc.rect(0, 0, targetSize.width, targetSize.height);
+                if (cc.rectContainsPoint(targetRectangle, location)) {
+                    cc.audioEngine.stopMusic();
+                    cc.director.runScene(new Title());
+                }
+                return true;
+            }
+        });
+
+
+        cc.eventManager.addListener(listener2.clone(), this);
+    },
 });
-*/
 

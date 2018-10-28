@@ -19,6 +19,7 @@ var TitleMainLayer = cc.Layer.extend({
             y: cc.winSize.height / 2
         });
         this.addChild(img, 0);
+
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
@@ -28,7 +29,8 @@ var TitleMainLayer = cc.Layer.extend({
             }
         });
 
-        cc.eventManager.addListener(listener, this);
+
+        cc.eventManager.addListener(listener.clone(), this);
 
         //cc.audioEngine.playMusic(res.bgm_title, true);
         //auto playのエラー。とりあえずタイトルのBGMなしで
@@ -36,3 +38,4 @@ var TitleMainLayer = cc.Layer.extend({
     }
 
 });
+
