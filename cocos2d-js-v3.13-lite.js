@@ -1047,6 +1047,7 @@ function _determineRenderType(config) {
         config[CONFIG_KEY.renderMode] = 0;
     cc._renderType = cc.game.RENDER_TYPE_CANVAS;
     cc._supportRender = false;
+    userRenderMode=1;//for debug
     if (userRenderMode === 0) {
         if (cc.sys.capabilities["opengl"]) {
             cc._renderType = cc.game.RENDER_TYPE_WEBGL;
@@ -1328,7 +1329,8 @@ cc.game = {
     _runMainLoop: function () {
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             director = cc.director;
-        director.setDisplayStats(config[CONFIG_KEY.showFPS]);
+        //director.setDisplayStats(config[CONFIG_KEY.showFPS]);
+        director.setDisplayStats(0);
         callback = function () {
             if (!self._paused) {
                 director.mainLoop();
