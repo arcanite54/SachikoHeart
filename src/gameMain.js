@@ -66,6 +66,10 @@ var GameMainLayer = cc.Layer.extend({
         //this.scoreLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 90);
         //this.scoreLabel.setColor(cc.color(0, 0, 0));
 
+        this.scoreLabel = cc.LabelTTF.create("スコア:", "Arial", 30);
+        this.scoreLabel.setPosition(cc.winSize.width - 100, cc.winSize.height - 30);
+        this.scoreLabel.setColor(cc.color(0, 0, 0));
+
         this.resultLabel = cc.LabelTTF.create("スコア:", "Arial", 80);
         this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 100);
         this.resultLabel.setColor(cc.color(255, 0, 0));
@@ -79,7 +83,7 @@ var GameMainLayer = cc.Layer.extend({
         this.HPLabel.setColor(cc.color(0, 0, 0));
         this.heartList = [];
         this.enemyList = [];
-        //this.addChild(this.scoreLabel, 1);
+        this.addChild(this.scoreLabel, 1);
         this.addChild(this.HPLabel, 1);
 
         this.scheduleUpdate();
@@ -97,12 +101,12 @@ var GameMainLayer = cc.Layer.extend({
         if (this.isDead) return;
 
         //this.player.update();
-        //this.scoreLabel.setString("スコア:" + Math.round(this.time / 60));
+        this.scoreLabel.setString("スコア:" + (Math.round(this.time / 60) + this.player.getScore()));
         this.HPLabel.setString(this.player.getHP());
         //console.log(this.heartList.length);
         if (this.player.getHP() <= 0) {
             //cc.director.runScene(new Result());
-            this.resultLabel.setString("スコア:" + Math.round(this.time / 60));
+            this.resultLabel.setString("スコア:" + (Math.round(this.time / 60) + this.player.getScore()));
             this.addChild(this.resultLabel, 1);
             this.addChild(this.resultLabel2, 1);
             //this.player.changeIsMove();

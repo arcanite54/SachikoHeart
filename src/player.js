@@ -16,6 +16,7 @@ var Player = cc.Sprite.extend({
         this.isMuteki = false;
         this.mutekiTime = 0;
         this.preAct = 0;
+        this.score = 0;
 
     },
     update: function (dt) {
@@ -69,6 +70,7 @@ var Player = cc.Sprite.extend({
     scorePlus: function (_point) {
         //this.setColor(new cc.color(255, 0, 255))
         this.HP += _point;
+        this.score += _point;
         gameLayer.addEffectHeart(_point);
     },
     damage: function () {
@@ -79,6 +81,9 @@ var Player = cc.Sprite.extend({
     },
     getHP: function () {
         return Math.max(this.HP, 0);
+    },
+    getScore: function () {
+        return this.score;
     },
     animation: function (dx) {
         this.stopAction(this.actionList[this.preAct]);
