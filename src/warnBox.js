@@ -8,21 +8,22 @@ var WarnBox = cc.Sprite.extend({
         //this.runAction(new cc.fadeOut(0));
         //this.count = 0;
     },
-    init: function (_l, _t) {
+    init: function (_l, _t, _j) {
+        //initいらない説
         this.l = _l;
         this.t = _t;
+        this.isSE = _j == 0 ? true : false;//音の重ね掛け回避
     },
     onEnter: function () {
         this._super();
         //this.runAction(new cc.fadeIn(0));
-        this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 100);
+        this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 200);
         this.runAction(new cc.blink(this.t / 60, 6));
         this.scheduleUpdate();
     },
     update: function () {
         this._super();
-        if (this.count % Math.floor(this.t / 6) == 0) cc.audioEngine.playEffect(res.se_warn);
-        //音量が重ね掛けされちゃうのどうしよう
+        if (this.count % Math.floor(this.t / 6) == 0 && this.isSE) cc.audioEngine.playEffect(res.se_warn);
         this.count++;
         if (this.count > this.t) gameLayer.removeObjOnly(this);
     }

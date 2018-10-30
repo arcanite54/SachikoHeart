@@ -13,10 +13,18 @@ var Player = cc.Sprite.extend({
         this.actionList = [];
         this.preMoveX = 0;
         this.isMove = false;
+        this.isMuteki = false;
+        this.mutekiTime = 0;
+        this.preAct = 0;
 
     },
     update: function (dt) {
         this._super();
+        if (this.isMuteki) this.mutekiTime++;
+        if (this.mutekiTime == 60) {
+            this.mutekiTime = 0;
+            this.isMuteki = false;
+        }
         var moveX = this.getPosition().x - this.targetX > 0 ? -this.speed : this.speed;
         var nextX = this.getPosition().x + moveX;
         if (Math.abs(this.getPosition().x - this.targetX) < this.speed) {
@@ -26,6 +34,7 @@ var Player = cc.Sprite.extend({
             nextX = Math.floor(this.targetX / cc.winSize.width * 5) * cc.winSize.width / 5 + cc.winSize.width / 10;
             this.targetX = nextX;
         }
+
         //console.log(moveX);
         //console.log(Math.floor(this.targetX / cc.winSize.width * 7));
 
@@ -57,22 +66,27 @@ var Player = cc.Sprite.extend({
     changeTargetX: function (_x) {
         this.targetX = _x;
     },
-    scorePlus: function (_x) {
-        //        this.score += _x;
-        this.HP += _x;
+    scorePlus: function (_point) {
+        //this.setColor(new cc.color(255, 0, 255))
+        this.HP += _point;
+        gameLayer.addEffectHeart(_point);
     },
     damage: function () {
+        if (this.isMuteki) return;
         this.HP -= 20;
+        this.isMuteki = true;
+        this.runAction(new cc.blink(1, 6));
     },
     getHP: function () {
         return Math.max(this.HP, 0);
     },
     animation: function (dx) {
+        this.stopAction(this.actionList[this.preAct]);
         var act = dx > 0 ? 2 : 1;//ここもっとうまいこと書けそう感
         if (dx == 0) act = 0;
         //console.log("animation"+act);
-        this.stopAllActions();
         this.runAction(this.actionList[act]);
+        this.preAct = act;
     },
     changeIsMove: function () {
         this.isMove = true;

@@ -26,6 +26,7 @@ var GameMainLayer = cc.Layer.extend({
         this.addChild(back_img, 0);
 
         this.effectCircleList = [];
+        this.effectHeartList = [];
         this.player = new Player();
         this.addChild(this.player, 0);
         this.time = 0;
@@ -89,6 +90,10 @@ var GameMainLayer = cc.Layer.extend({
     },
     update: function (dt) {
         this.HPLabel.setPosition(this.player.getPosition().x, this.player.getPosition().y + 120);
+        for (var i = 0; i < this.effectHeartList.length; i++) {
+            this.effectHeartList[i].changePosition(this.player.getPosition().x, this.player.getPosition().y);
+        }
+
         if (this.isDead) return;
 
         //this.player.update();
@@ -121,11 +126,13 @@ var GameMainLayer = cc.Layer.extend({
         //console.log(preWarn);
         if (preWarn == this.time2) {
             //forEachがつかえないっぽい
+            var j = 0;
             for (var i = 0; i < 5; i++) {
                 if (this.hardLineList[i] != this.isHard) continue;
                 var w = this.isHard ? new WarnBox1() : new WarnBox2;
-                w.init(i, this.hardStartTime - preWarn);
+                w.init(i, this.hardStartTime - preWarn, j);
                 this.addChild(w, 2);
+                j++;
             }
         }
         //if (this.time2 == this.hardStartTime)
@@ -197,9 +204,13 @@ var GameMainLayer = cc.Layer.extend({
         // var circle = new cc.DrawNode().drawDot(cc.p(_p.x, _p.y), 50, cc.color(255, 0, 0));
         // this.effectCircleList.push(circle);
         // this.addChild(circle, 2);
-        var circle = new EffectCircle();//なんでcc.DrawNode()できないんじゃい
-        circle.init(_p.x, _p.y);
+        var circle = new EffectCircle(_p.x, _p.y);//なんでcc.DrawNode()できないんじゃい
         this.addChild(circle, 2);
+    },
+    addEffectHeart: function (_point) {
+        var eff = new EffectHeart(_point, this.player.getPosition().x, this.player.getPosition().y);
+        this.addChild(eff, 1);
+        this.effectHeartList.push(eff);
     },
     preAddHeart: function (_t) {
         for (var i = 0; i < 5; i++) {
@@ -256,7 +267,7 @@ var RetryBox = cc.Sprite.extend({
             }
         });
 
-
+        //ゲームオーバー時，こっちが優先されるので，プレイヤー操作ができなくなる
         cc.eventManager.addListener(listener2.clone(), this);
     },
 });
