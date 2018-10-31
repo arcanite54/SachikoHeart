@@ -21,6 +21,20 @@
     <!--<script type="text/javascript" src="./src/class.js" charset="UTF-8"></script>
     <script type="text/javascript" src="./src/scene.js" charset="UTF-8"></script>-->
 
+	<script type="text/javascript">
+	<!--
+	// 自ウインドウを警告（確認ダイアログ）なしに閉じる
+	
+	document.onkeydown = function (e){
+	if(!e) e = window.event; // レガシー
+
+	if(e.keyCode==27)window.open('about:blank','_self').close();	
+};
+	-->
+	</script>
+		
+
+
 </body>
 
 </html>
