@@ -31,7 +31,7 @@ var GameMainLayer = cc.Layer.extend({
         this.addChild(this.player, 0);
         this.time = 0;
         this.time2 = 0;
-        this.cycle = 1800;
+        this.cycle = 1200;
         this.fallSpeed = 5;
         this.fallCycle = 180;
         this.hardLineList = [false, false, false, false, false];
