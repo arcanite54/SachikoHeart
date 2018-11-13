@@ -2,11 +2,6 @@
 var WarnBox = cc.Sprite.extend({
     ctor: function () {
         this._super();
-        //var size = cc.winSize;
-        //this.initWithFile(res.img_sachiko);
-        //this.initWithFile(res.img_warn);
-        //this.runAction(new cc.fadeOut(0));
-        //this.count = 0;
     },
     init: function (_l, _t, _j) {
         //initいらない説
@@ -16,7 +11,6 @@ var WarnBox = cc.Sprite.extend({
     },
     onEnter: function () {
         this._super();
-        //this.runAction(new cc.fadeIn(0));
         this.setPosition(this.l * cc.winSize.width / 5 + cc.winSize.width / 10, cc.winSize.height - 200);
         this.runAction(new cc.blink(this.t / 60, 6));
         this.scheduleUpdate();
@@ -32,10 +26,7 @@ var WarnBox = cc.Sprite.extend({
 var WarnBox1 = WarnBox.extend({
     ctor: function () {
         this._super();
-        //var size = cc.winSize;
-        //this.initWithFile(res.img_sachiko);
         this.initWithFile(res.img_warn1);
-        //this.runAction(new cc.fadeOut(0));
         this.count = 0;
     }
 });
@@ -43,10 +34,7 @@ var WarnBox1 = WarnBox.extend({
 var WarnBox2 = WarnBox.extend({
     ctor: function () {
         this._super();
-        //var size = cc.winSize;
-        //this.initWithFile(res.img_sachiko);
         this.initWithFile(res.img_warn2);
-        //this.runAction(new cc.fadeOut(0));
         this.count = 0;
     }
 });

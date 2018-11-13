@@ -12,17 +12,14 @@ var FallObj = cc.Sprite.extend({
         this._super();
         var startX = this.x * cc.winSize.width / 5 + cc.winSize.width / 10;
         this.setPosition(startX, cc.winSize.height + 50);
-        //console.log(startX);
         var moveAction = cc.MoveTo.create(this.t, new cc.Point(startX, -50));//ここどうしよう
         this.runAction(moveAction);
         this.scheduleUpdate();
     },
     _update: function (_player) {
-        //if (cc.rectIntersectsRect(_player.getBoundingBox(), this.getBoundingBox())) {
         if (cc.rectIntersectsRect(cc.rect(_player.getPosition().x, _player.getPosition().y, 50, 50), this.getBoundingBox())) {
             this.hit(_player);
             this.removeObj(this);
-            //console.log("hoge");
         }
         if (this.getPosition().y <= -30) {
             this.removeObj(this);

@@ -7,12 +7,8 @@ var Title = cc.Scene.extend({
 });
 
 var TitleMainLayer = cc.Layer.extend({
-    //sprite:null,
-    //コンストラクタ
     ctor: function () {
         this._super();
-        //var backgroundLayer = new cc.LayerColor(cc.color(255, 202, 222, 255));
-        //this.addChild(backgroundLayer);
         var img = new cc.Sprite(res.img_title);
         img.attr({
             x: cc.winSize.width / 2,
@@ -28,14 +24,9 @@ var TitleMainLayer = cc.Layer.extend({
                 return true;
             }
         });
-
-
         cc.eventManager.addListener(listener.clone(), this);
-
         //cc.audioEngine.playMusic(res.bgm_title, true);
         //auto playのエラー。とりあえずタイトルのBGMなしで
-
     }
-
 });
 
