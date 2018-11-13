@@ -38,7 +38,7 @@ var GameMainLayer = cc.Layer.extend({
         //本当は外で定義したい↓
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            swallowTouches: true,
+            swallowTouches: false,
             onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
 
@@ -80,15 +80,18 @@ var GameMainLayer = cc.Layer.extend({
         }
 
         if (this.isDead) return;
-
-        this.scoreLabel.setString("スコア:" + (Math.round(this.time / 60) + this.player.getScore()));
+        score = Math.round(this.time / 60) + this.player.getScore()
+        this.scoreLabel.setString("スコア:" + score);
         this.HPLabel.setString(this.player.getHP());
         if (this.player.getHP() <= 0) {
-            this.resultLabel.setString("スコア:" + (Math.round(this.time / 60) + this.player.getScore()));
+            this.resultLabel.setString("スコア:" + score);
             this.addChild(this.resultLabel, 1);
             this.addChild(this.resultLabel2, 1);
             var retry = new RetryBox();
             this.addChild(retry, 2);
+            var tweet = new TweetBox(score);
+            this.addChild(tweet, 2);
+
             this.isDead = true;
         }
         for (var i = 0; i < this.heartList.length; i++) {
@@ -212,7 +215,7 @@ var RetryBox = cc.Sprite.extend({
 
         var listener2 = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
-            swallowTouches: true,
+            swallowTouches: false,
             onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
                 var location = target.convertToNodeSpace(touch.getLocation());
@@ -225,8 +228,39 @@ var RetryBox = cc.Sprite.extend({
                 return true;
             }
         });
-        //ゲームオーバー時，こっちが優先されるので，プレイヤー操作ができなくなる
         cc.eventManager.addListener(listener2.clone(), this);
     },
+});
+
+var TweetBox = cc.Sprite.extend({
+    ctor: function (_score) {
+        this._super();
+        this.initWithFile(res.img_tweet);
+        this.attr({
+            x: cc.winSize.width / 2,
+            y: cc.winSize.height / 3 + 50,
+            scale: 0.3
+        });
+        var listener = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: false,
+            onTouchBegan: function (touch, event) {
+                var target = event.getCurrentTarget();
+                var location = target.convertToNodeSpace(touch.getLocation());
+                var targetSize = target.getContentSize();
+                var targetRectangle = cc.rect(0, 0, targetSize.width, targetSize.height);
+                if (cc.rectContainsPoint(targetRectangle, location)) {
+                    target.openTwitter(_score)
+                }
+                return true;
+            }
+        });
+        cc.eventManager.addListener(listener.clone(), this);
+    },
+    openTwitter: function (score) {
+        var text = "スコア:" + score + "%0A幸子カワイイよ！%0A"
+        var turl = "https://twitter.com/share?text=" + text + "&hashtags=KawaiiPanic" + "&url=" + "https://arcanite54.github.io/SachikoHeart/";
+        window.open(turl, '_blank');
+    }
 });
 
