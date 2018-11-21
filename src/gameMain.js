@@ -1,7 +1,7 @@
-var gameLayer;//グローバルでいいのかなあ
+var gameLayer; //グローバルでいいのかなあ
 
 var GameMainScene = cc.Scene.extend({
-    onEnter: function () {
+    onEnter: function() {
         this._super();
         gameLayer = new GameMainLayer();
         this.addChild(gameLayer);
@@ -9,7 +9,7 @@ var GameMainScene = cc.Scene.extend({
 });
 
 var GameMainLayer = cc.Layer.extend({
-    ctor: function () {
+    ctor: function() {
         this._super();
         cc.audioEngine.playMusic(res.bgm_main, true);
         var back_img = new cc.Sprite(res.img_back);
@@ -33,16 +33,16 @@ var GameMainLayer = cc.Layer.extend({
         this.hardStartTime = this.cycle - 10;
         this.hardEndTime = this.cycle;
         this.isDead = false;
-        this.isHard = true;//trueなら警告通りにenemyが飛んでくる
+        this.isHard = true; //trueなら警告通りにenemyが飛んでくる
 
         //本当は外で定義したい↓
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function (touch, event) {
+            onTouchBegan: function(touch, event) {
                 var target = event.getCurrentTarget();
 
-                target.player.changeTargetX(touch.getLocation().x);//ここなんでtargetなんだろう
+                target.player.changeTargetX(touch.getLocation().x); //ここなんでtargetなんだろう
                 //書いてあった↓
                 //http://mmorley.hatenablog.com/entry/2015/09/22/230549
                 target.addEffectCircle(touch.getLocation());
@@ -52,19 +52,30 @@ var GameMainLayer = cc.Layer.extend({
         cc.eventManager.addListener(listener.clone(), this);
 
         this.scoreLabel = cc.LabelTTF.create("スコア:", "Arial", 30);
-        this.scoreLabel.setPosition(cc.winSize.width - 100, cc.winSize.height - 30);
+        this.scoreLabel.setPosition(
+            cc.winSize.width - 100,
+            cc.winSize.height - 30
+        );
         this.scoreLabel.setColor(cc.color(0, 0, 0));
 
         this.resultLabel = cc.LabelTTF.create("スコア:", "Arial", 80);
-        this.resultLabel.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 100);
+        this.resultLabel.setPosition(
+            cc.winSize.width / 2,
+            cc.winSize.height / 2 + 100
+        );
         this.resultLabel.setColor(cc.color(255, 0, 0));
         this.resultLabel2 = cc.LabelTTF.create("ゲームオーバー", "Arial", 60);
-        this.resultLabel2.setPosition(cc.winSize.width / 2, cc.winSize.height / 2 + 190);
+        this.resultLabel2.setPosition(
+            cc.winSize.width / 2,
+            cc.winSize.height / 2 + 190
+        );
         this.resultLabel2.setColor(cc.color(255, 0, 0));
 
-
         this.HPLabel = cc.LabelTTF.create("", "Arial", 40);
-        this.HPLabel.setPosition(cc.winSize.width - 120, cc.winSize.height - 50);
+        this.HPLabel.setPosition(
+            cc.winSize.width - 120,
+            cc.winSize.height - 50
+        );
         this.HPLabel.setColor(cc.color(0, 0, 0));
         this.heartList = [];
         this.enemyList = [];
@@ -73,14 +84,20 @@ var GameMainLayer = cc.Layer.extend({
 
         this.scheduleUpdate();
     },
-    update: function (dt) {
-        this.HPLabel.setPosition(this.player.getPosition().x, this.player.getPosition().y + 120);
+    update: function(dt) {
+        this.HPLabel.setPosition(
+            this.player.getPosition().x,
+            this.player.getPosition().y + 120
+        );
         for (var i = 0; i < this.effectHeartList.length; i++) {
-            this.effectHeartList[i].changePosition(this.player.getPosition().x, this.player.getPosition().y);
+            this.effectHeartList[i].changePosition(
+                this.player.getPosition().x,
+                this.player.getPosition().y
+            );
         }
 
         if (this.isDead) return;
-        score = Math.round(this.time / 60) + this.player.getScore()
+        score = Math.round(this.time / 60) + this.player.getScore();
         this.scoreLabel.setString("スコア:" + score);
         this.HPLabel.setString(this.player.getHP());
         if (this.player.getHP() <= 0) {
@@ -103,13 +120,16 @@ var GameMainLayer = cc.Layer.extend({
 
         if (this.time2 % this.fallCycle == 0) this.normalPhase();
 
-        var preWarn = Math.max(Math.floor(this.hardStartTime - 180 * this.cycle / 1200), 0);
+        var preWarn = Math.max(
+            Math.floor(this.hardStartTime - (180 * this.cycle) / 1200),
+            0
+        );
         if (preWarn == this.time2) {
             //forEachがつかえないっぽい
             var j = 0;
             for (var i = 0; i < 5; i++) {
                 if (this.hardLineList[i] != this.isHard) continue;
-                var w = this.isHard ? new WarnBox1() : new WarnBox2;
+                var w = this.isHard ? new WarnBox1() : new WarnBox2();
                 w.init(i, this.hardStartTime - preWarn, j);
                 this.addChild(w, 2);
                 j++;
@@ -127,20 +147,26 @@ var GameMainLayer = cc.Layer.extend({
             this.endPhase();
         }
     },
-    normalPhase: function () {
-        var k = Math.floor((Math.random() * 6));
+    normalPhase: function() {
+        var k = Math.floor(Math.random() * 6);
         this.addHeart(k, this.fallSpeed + (Math.random() * 2 - 1));
         for (var i = 0; i < 5; i++) {
             if (i == k) continue;
             var n = Math.floor(Math.random() * 10);
-            if (n < 2) this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 0.5));
-            else if (7 <= n) this.addEnemy(i, this.fallSpeed + (Math.random() * 2 - 1), Math.floor(Math.random() * 3));
+            if (n < 2)
+                this.addHeart(i, this.fallSpeed + (Math.random() * 2 - 0.5));
+            else if (7 <= n)
+                this.addEnemy(
+                    i,
+                    this.fallSpeed + (Math.random() * 2 - 1),
+                    Math.floor(Math.random() * 3)
+                );
         }
     },
-    hardPhase: function (_l) {
+    hardPhase: function(_l) {
         this.addEnemy(_l, 1, 3);
     },
-    endPhase: function () {
+    endPhase: function() {
         this.time2 = 0;
         this.cycle = Math.max(this.cycle - 120, 360);
         this.fallSpeed = Math.max(this.fallSpeed - 0.3, 2.0);
@@ -157,33 +183,37 @@ var GameMainLayer = cc.Layer.extend({
         this.hardEndTime = this.hardStartTime + Math.random() * 9 + 2;
         this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
     },
-    addHeart: function (_i, _t) {
+    addHeart: function(_i, _t) {
         var heart = new Heart();
         heart.init(_i, _t);
         this.addChild(heart, 1);
         this.heartList.push(heart);
     },
-    addEnemy: function (_i, _t, _type) {
+    addEnemy: function(_i, _t, _type) {
         var enemy = new Enemy();
         enemy.init(_i, _t, _type);
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
     },
-    addEffectCircle: function (_p) {
-        var circle = new EffectCircle(_p.x, _p.y);//なんでcc.DrawNode()できないんじゃい
+    addEffectCircle: function(_p) {
+        var circle = new EffectCircle(_p.x, _p.y); //なんでcc.DrawNode()できないんじゃい
         this.addChild(circle, 2);
     },
-    addEffectHeart: function (_point) {
-        var eff = new EffectHeart(_point, this.player.getPosition().x, this.player.getPosition().y);
+    addEffectHeart: function(_point) {
+        var eff = new EffectHeart(
+            _point,
+            this.player.getPosition().x,
+            this.player.getPosition().y
+        );
         this.addChild(eff, 1);
         this.effectHeartList.push(eff);
     },
-    preAddHeart: function (_t) {
+    preAddHeart: function(_t) {
         for (var i = 0; i < 5; i++) {
             if (Math.floor(Math.random() * 10) < 4) this.addHeart(i, _t);
         }
     },
-    preAddEnemy: function (_t) {
+    preAddEnemy: function(_t) {
         var k = Math.floor(Math.random() * 6.9);
         for (var i = 0; i < 5; i++) {
             if (i == k) continue;
@@ -191,24 +221,23 @@ var GameMainLayer = cc.Layer.extend({
                 this.addEnemy(i, _t);
             }
         }
-
     },
     //この二つのremoveまとめられそうだけど．
-    removeHeart: function (_obj) {
+    removeHeart: function(_obj) {
         this.heartList.splice(this.heartList.indexOf(_obj), 1);
         this.removeChild(_obj);
     },
-    removeEnemy: function (_obj) {
+    removeEnemy: function(_obj) {
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);
         this.removeChild(_obj);
     },
-    removeObjOnly: function (_obj) {
+    removeObjOnly: function(_obj) {
         this.removeChild(_obj);
     }
 });
 
 var RetryBox = cc.Sprite.extend({
-    ctor: function () {
+    ctor: function() {
         this._super();
         this.initWithFile(res.img_retry);
         this.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
@@ -216,11 +245,16 @@ var RetryBox = cc.Sprite.extend({
         var listener2 = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function (touch, event) {
+            onTouchBegan: function(touch, event) {
                 var target = event.getCurrentTarget();
                 var location = target.convertToNodeSpace(touch.getLocation());
                 var targetSize = target.getContentSize();
-                var targetRectangle = cc.rect(0, 0, targetSize.width, targetSize.height);
+                var targetRectangle = cc.rect(
+                    0,
+                    0,
+                    targetSize.width,
+                    targetSize.height
+                );
                 if (cc.rectContainsPoint(targetRectangle, location)) {
                     cc.audioEngine.stopMusic();
                     cc.director.runScene(new Title());
@@ -229,11 +263,11 @@ var RetryBox = cc.Sprite.extend({
             }
         });
         cc.eventManager.addListener(listener2.clone(), this);
-    },
+    }
 });
 
 var TweetBox = cc.Sprite.extend({
-    ctor: function (_score) {
+    ctor: function(_score) {
         this._super();
         this.initWithFile(res.img_tweet);
         this.attr({
@@ -244,23 +278,36 @@ var TweetBox = cc.Sprite.extend({
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function (touch, event) {
+            onTouchBegan: function(touch, event) {
                 var target = event.getCurrentTarget();
                 var location = target.convertToNodeSpace(touch.getLocation());
                 var targetSize = target.getContentSize();
-                var targetRectangle = cc.rect(0, 0, targetSize.width, targetSize.height);
+                var targetRectangle = cc.rect(
+                    0,
+                    0,
+                    targetSize.width,
+                    targetSize.height
+                );
                 if (cc.rectContainsPoint(targetRectangle, location)) {
-                    target.openTwitter(_score)
+                    target.openTwitter(_score);
                 }
                 return true;
             }
         });
         cc.eventManager.addListener(listener.clone(), this);
     },
-    openTwitter: function (score) {
-        var text = "スコア:" + score + "%0A幸子カワイイよ！%0A"
-        var turl = "https://twitter.com/share?text=" + text + "&hashtags=KawaiiPanic" + "&url=" + "https://arcanite54.github.io/SachikoHeart/";
-        window.open(turl, '_blank');
+    openTwitter: function(score) {
+        var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
+        var turl =
+            "https://twitter.com/share?text=" +
+            text +
+            "&hashtags=KawaiiPanic" +
+            "&url=" +
+            "https://arcanite54.github.io/SachikoHeart/";
+        window.open(
+            turl,
+            "tweetwindow",
+            "width=650, height=470, personalbar=0, toolbar=0, scrollbars=1, sizable=1"
+        );
     }
 });
-
