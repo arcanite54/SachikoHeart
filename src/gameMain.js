@@ -299,7 +299,8 @@ var TweetBox = cc.Sprite.extend({
     openTwitter: function(score) {
         var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
         var turl =
-            "https://twitter.com/share?text=" +
+            //"https://twitter.com/share?text=" +
+            "twitter://post?message=" +
             text +
             "&hashtags=KawaiiPanic" +
             "&url=" +
