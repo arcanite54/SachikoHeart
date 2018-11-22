@@ -304,6 +304,6 @@ var TweetBox = cc.Sprite.extend({
             text +
             "&hashtags=KawaiiPanic" +
             "&url=https://arcanite54.github.io/SachikoHeart/";
-        window.open(turl, "share window", "width=480, height=320");
+        window.open(turl, null, "width=480, height=320");
     }
 });
