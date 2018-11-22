@@ -299,16 +299,11 @@ var TweetBox = cc.Sprite.extend({
     openTwitter: function(score) {
         var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
         var turl =
-            //"https://twitter.com/share?text=" +
-            "twitter://post?message=" +
+            "http://twitter.com/intent/tweet?text=" +
+            //"twitter://post?text=" +
             text +
             "&hashtags=KawaiiPanic" +
-            "&url=" +
-            "https://arcanite54.github.io/SachikoHeart/";
-        window.open(
-            turl,
-            "tweetwindow",
-            "width=650, height=470, personalbar=0, toolbar=0, scrollbars=1, sizable=1"
-        );
+            "&url=https://arcanite54.github.io/SachikoHeart/";
+        window.open(turl, "share window", "width=480, height=320");
     }
 });
