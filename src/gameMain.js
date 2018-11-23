@@ -306,10 +306,11 @@ var TweetBox = cc.Sprite.extend({
             navigator.userAgent.indexOf("Android") > 0
         ) {
             var url =
-                "twitter://tweet?text=" +
+                "twitter://post?message=" +
                 text +
-                "&hashtags=KawaiiPanic" +
-                "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+                "#KawaiiPanic" +
+                "%0A" +
+                "https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
 
             location.href = url;
         } else {
