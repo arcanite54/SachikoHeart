@@ -298,11 +298,6 @@ var TweetBox = cc.Sprite.extend({
     },
     openTwitter: function(score) {
         var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
-        var url =
-            "http://twitter.com/intent/tweet?text=" +
-            text +
-            "&hashtags=KawaiiPanic" +
-            "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
 
         if (
             (navigator.userAgent.indexOf("iPhone") > 0 &&
@@ -310,8 +305,20 @@ var TweetBox = cc.Sprite.extend({
             navigator.userAgent.indexOf("iPod") > 0 ||
             navigator.userAgent.indexOf("Android") > 0
         ) {
+            var url =
+                "twitter://tweet?text=" +
+                text +
+                "&hashtags=KawaiiPanic" +
+                "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+
             location.href = url;
         } else {
+            var url =
+                "http://twitter.com/intent/tweet?text=" +
+                text +
+                "&hashtags=KawaiiPanic" +
+                "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+
             window.open(url, null, "width=480, height=320");
         }
     }
