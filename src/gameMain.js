@@ -298,12 +298,21 @@ var TweetBox = cc.Sprite.extend({
     },
     openTwitter: function(score) {
         var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
-        var turl =
+        var url =
             "http://twitter.com/intent/tweet?text=" +
-            //"twitter://post?text=" +
             text +
             "&hashtags=KawaiiPanic" +
-            "&url=https://arcanite54.github.io/SachikoHeart/";
-        window.open(turl, null, "width=480, height=320");
+            "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+
+        if (
+            (navigator.userAgent.indexOf("iPhone") > 0 &&
+                navigator.userAgent.indexOf("iPad") == -1) ||
+            navigator.userAgent.indexOf("iPod") > 0 ||
+            navigator.userAgent.indexOf("Android") > 0
+        ) {
+            location.href = url;
+        } else {
+            window.open(url, null, "width=480, height=320");
+        }
     }
 });
