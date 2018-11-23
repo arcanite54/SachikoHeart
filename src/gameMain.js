@@ -308,9 +308,9 @@ var TweetBox = cc.Sprite.extend({
             var url =
                 "twitter://post?message=" +
                 text +
-                "#KawaiiPanic" +
+                "\\#KawaiiPanic" +
                 "%0A" +
-                "https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+                "https\\:\\/\\/arcanite54.github.io\\/SachikoHeart\\/"; //"twitter://post?text=" +
 
             location.href = url;
         } else {
