@@ -297,7 +297,7 @@ var TweetBox = cc.Sprite.extend({
         cc.eventManager.addListener(listener.clone(), this);
     },
     openTwitter: function (score) {
-        var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
+        var text = "スコア:" + score + "%0A幸子のゲームをプレイしました！%0A幸子カワイイよ！%0A";
 
         if (
             (navigator.userAgent.indexOf("iPhone") > 0 &&
