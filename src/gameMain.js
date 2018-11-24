@@ -1,7 +1,7 @@
 var gameLayer; //グローバルでいいのかなあ
 
 var GameMainScene = cc.Scene.extend({
-    onEnter: function() {
+    onEnter: function () {
         this._super();
         gameLayer = new GameMainLayer();
         this.addChild(gameLayer);
@@ -9,7 +9,7 @@ var GameMainScene = cc.Scene.extend({
 });
 
 var GameMainLayer = cc.Layer.extend({
-    ctor: function() {
+    ctor: function () {
         this._super();
         cc.audioEngine.playMusic(res.bgm_main, true);
         var back_img = new cc.Sprite(res.img_back);
@@ -39,7 +39,7 @@ var GameMainLayer = cc.Layer.extend({
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function(touch, event) {
+            onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
 
                 target.player.changeTargetX(touch.getLocation().x); //ここなんでtargetなんだろう
@@ -84,7 +84,7 @@ var GameMainLayer = cc.Layer.extend({
 
         this.scheduleUpdate();
     },
-    update: function(dt) {
+    update: function (dt) {
         this.HPLabel.setPosition(
             this.player.getPosition().x,
             this.player.getPosition().y + 120
@@ -147,7 +147,7 @@ var GameMainLayer = cc.Layer.extend({
             this.endPhase();
         }
     },
-    normalPhase: function() {
+    normalPhase: function () {
         var k = Math.floor(Math.random() * 6);
         this.addHeart(k, this.fallSpeed + (Math.random() * 2 - 1));
         for (var i = 0; i < 5; i++) {
@@ -163,10 +163,10 @@ var GameMainLayer = cc.Layer.extend({
                 );
         }
     },
-    hardPhase: function(_l) {
+    hardPhase: function (_l) {
         this.addEnemy(_l, 1, 3);
     },
-    endPhase: function() {
+    endPhase: function () {
         this.time2 = 0;
         this.cycle = Math.max(this.cycle - 120, 360);
         this.fallSpeed = Math.max(this.fallSpeed - 0.3, 2.0);
@@ -183,23 +183,23 @@ var GameMainLayer = cc.Layer.extend({
         this.hardEndTime = this.hardStartTime + Math.random() * 9 + 2;
         this.hardEndTime = Math.min(this.hardEndTime, this.cycle);
     },
-    addHeart: function(_i, _t) {
+    addHeart: function (_i, _t) {
         var heart = new Heart();
         heart.init(_i, _t);
         this.addChild(heart, 1);
         this.heartList.push(heart);
     },
-    addEnemy: function(_i, _t, _type) {
+    addEnemy: function (_i, _t, _type) {
         var enemy = new Enemy();
         enemy.init(_i, _t, _type);
         this.addChild(enemy, 1);
         this.enemyList.push(enemy);
     },
-    addEffectCircle: function(_p) {
+    addEffectCircle: function (_p) {
         var circle = new EffectCircle(_p.x, _p.y); //なんでcc.DrawNode()できないんじゃい
         this.addChild(circle, 2);
     },
-    addEffectHeart: function(_point) {
+    addEffectHeart: function (_point) {
         var eff = new EffectHeart(
             _point,
             this.player.getPosition().x,
@@ -208,12 +208,12 @@ var GameMainLayer = cc.Layer.extend({
         this.addChild(eff, 1);
         this.effectHeartList.push(eff);
     },
-    preAddHeart: function(_t) {
+    preAddHeart: function (_t) {
         for (var i = 0; i < 5; i++) {
             if (Math.floor(Math.random() * 10) < 4) this.addHeart(i, _t);
         }
     },
-    preAddEnemy: function(_t) {
+    preAddEnemy: function (_t) {
         var k = Math.floor(Math.random() * 6.9);
         for (var i = 0; i < 5; i++) {
             if (i == k) continue;
@@ -223,21 +223,21 @@ var GameMainLayer = cc.Layer.extend({
         }
     },
     //この二つのremoveまとめられそうだけど．
-    removeHeart: function(_obj) {
+    removeHeart: function (_obj) {
         this.heartList.splice(this.heartList.indexOf(_obj), 1);
         this.removeChild(_obj);
     },
-    removeEnemy: function(_obj) {
+    removeEnemy: function (_obj) {
         this.enemyList.splice(this.enemyList.indexOf(_obj), 1);
         this.removeChild(_obj);
     },
-    removeObjOnly: function(_obj) {
+    removeObjOnly: function (_obj) {
         this.removeChild(_obj);
     }
 });
 
 var RetryBox = cc.Sprite.extend({
-    ctor: function() {
+    ctor: function () {
         this._super();
         this.initWithFile(res.img_retry);
         this.setPosition(cc.winSize.width / 2, cc.winSize.height / 2);
@@ -245,7 +245,7 @@ var RetryBox = cc.Sprite.extend({
         var listener2 = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function(touch, event) {
+            onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
                 var location = target.convertToNodeSpace(touch.getLocation());
                 var targetSize = target.getContentSize();
@@ -267,7 +267,7 @@ var RetryBox = cc.Sprite.extend({
 });
 
 var TweetBox = cc.Sprite.extend({
-    ctor: function(_score) {
+    ctor: function (_score) {
         this._super();
         this.initWithFile(res.img_tweet);
         this.attr({
@@ -278,7 +278,7 @@ var TweetBox = cc.Sprite.extend({
         var listener = cc.EventListener.create({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: false,
-            onTouchBegan: function(touch, event) {
+            onTouchBegan: function (touch, event) {
                 var target = event.getCurrentTarget();
                 var location = target.convertToNodeSpace(touch.getLocation());
                 var targetSize = target.getContentSize();
@@ -296,29 +296,38 @@ var TweetBox = cc.Sprite.extend({
         });
         cc.eventManager.addListener(listener.clone(), this);
     },
-    openTwitter: function(score) {
+    openTwitter: function (score) {
         var text = "スコア:" + score + "%0A幸子カワイイよ！%0A";
 
         if (
             (navigator.userAgent.indexOf("iPhone") > 0 &&
                 navigator.userAgent.indexOf("iPad") == -1) ||
-            navigator.userAgent.indexOf("iPod") > 0 ||
-            navigator.userAgent.indexOf("Android") > 0
+            navigator.userAgent.indexOf("iPod") > 0
         ) {
             var url =
                 "twitter://post?message=" +
                 text +
                 "%23KawaiiPanic" +
                 "%0A" +
-                "https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+                "https://arcanite54.github.io/SachikoHeart/";
 
             location.href = url;
-        } else {
+        } else if (navigator.userAgent.indexOf("Android") > 0) {
+            var url =
+                "intent://post?message=" +
+                text +
+                "%23KawaiiPanic" +
+                "%0A" +
+                "https://arcanite54.github.io/SachikoHeart/" +
+                "%23Intent;scheme=twitter;package=com.twitter.android;end;";
+            location.href = url;
+        }
+        else {
             var url =
                 "http://twitter.com/intent/tweet?text=" +
                 text +
                 "&hashtags=KawaiiPanic" +
-                "&url=https://arcanite54.github.io/SachikoHeart/"; //"twitter://post?text=" +
+                "&url=https://arcanite54.github.io/SachikoHeart/";
 
             window.open(url, null, "width=480, height=320");
         }
