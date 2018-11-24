@@ -297,7 +297,7 @@ var TweetBox = cc.Sprite.extend({
         cc.eventManager.addListener(listener.clone(), this);
     },
     openTwitter: function (score) {
-        var text = "スコア:" + score + "%0A幸子のゲームをプレイしました！%0A幸子カワイイよ！%0A";
+        var text = "スコア:" + score + "%0A「カワイイパニック！？」をプレイしました！%0A幸子カワイイよ！%0A";
 
         if (
             (navigator.userAgent.indexOf("iPhone") > 0 &&
@@ -324,7 +324,7 @@ var TweetBox = cc.Sprite.extend({
         }
         else {
             var url =
-                "http://twitter.com/intent/tweet?text=" +
+                "https://twitter.com/intent/tweet?text=" +
                 text +
                 "&hashtags=KawaiiPanic" +
                 "&url=https://arcanite54.github.io/SachikoHeart/";
