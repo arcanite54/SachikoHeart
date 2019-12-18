@@ -20,3 +20,5 @@ window.onload = function () {
     };
     cc.game.run("gameCanvas");
 };
+
+//hogeeeee
